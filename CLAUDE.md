@@ -36,17 +36,20 @@ confirmacion validada del lado del servidor.
 
 ### Datos del catalogo
 
-- El proxy devuelve **exactamente 8 campos por producto**:
+- El proxy devuelve **exactamente 9 campos por producto**:
   `id_item`, `referencia`, `descripcion`, `categoria`, `codigo_barra`, `precio`,
-  `precio_fuente`, `existencias`. No hay mas.
+  `precio_fuente`, `existencias`, `activo`. No hay mas.
 - **`id_item` es SIEMPRE string.** Viene con ceros a la izquierda ("000002").
   Nunca lo trates como numero, se pierden los ceros.
 - **`existencias` llega siempre `null` por ahora.** El proveedor del ERP aun no
   expone stock. El campo esta en el tipo, pero no construyas logica de
   "agotado" ni deshabilites el boton de compra hasta que llegue con datos.
+- **`activo` (boolean) esta en el contrato pero AUN NO FILTRAMOS por el.** Hay
+  que confirmar con el cliente que significan los estados del ERP antes de
+  usarlo como criterio de publicacion.
 - **`categoria` es la clave de cruce con `lib/catalogo/familias.ts`.** Nombre
   crudo del ERP en MAYUSCULAS. No lo edites.
-- **`precio_fuente === 'respaldo_mayorista'`**: ~698 productos que solo tienen
+- **`precio_fuente === 'respaldo_mayorista'`**: ~697 productos que solo tienen
   lista mayorista, no publica. Controlados por el flag
   `OCULTAR_RESPALDO_MAYORISTA`.
 - **Categorias sin mapear**: si `getProductos()` encuentra una `categoria` que
@@ -54,6 +57,31 @@ confirmacion validada del lado del servidor.
   catalogo publico. Nunca los agrupes bajo "otros" ni bajo una familia
   inventada. El warning es la senal de que hay que agregar la categoria nueva
   al mapa.
+
+### Endpoints del proxy
+
+Base: `https://api.tiendasbigbang.com`. Todos requieren `x-api-key` en el header.
+
+- **`GET /productos`** — lo que consume el sitio. Payload gzipeado, cache en
+  memoria del proxy, responde en milisegundos.
+- **`GET /catalogo?limit=N`** — datos crudos del ERP (una fila por lista de
+  precio, con impuestos y diez codigos de barra). Limite 100 por defecto,
+  maximo 1000. **Solo depuracion**, el sitio no lo usa.
+- **`GET /status`** — estado del cache del proxy.
+- **`POST /refrescar`** — fuerza un refresco del cache del proxy.
+
+### Timeouts del proxy (undici)
+
+Con el proxy respondiendo desde cache en memoria (~ms), los timeouts deben
+ser cortos: timeouts largos esconden problemas reales. Valores actuales en
+[lib/catalogo/proxy.ts](lib/catalogo/proxy.ts):
+
+- `connect.timeout: 5_000` — DNS+connect+TLS reales son ~200ms.
+- `headersTimeout: 15_000` / `bodyTimeout: 15_000`.
+- `AbortSignal.timeout: 15_000` — watchdog global.
+
+Si estos empiezan a dispararse en produccion, no los subas: revisa primero
+el droplet (endpoints `/status` y `/refrescar`).
 
 ### Numero de pedido
 

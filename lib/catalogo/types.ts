@@ -2,7 +2,7 @@ import type { FamiliaSlug } from "./familias-meta";
 
 /**
  * Producto crudo devuelto por el proxy del catalogo.
- * El proxy devuelve EXACTAMENTE estos 8 campos, no hay mas.
+ * El proxy devuelve EXACTAMENTE estos 9 campos, no hay mas.
  */
 export interface ProductoProxy {
   /** Clave del producto en el ERP. Viene con ceros a la izquierda. SIEMPRE string. */
@@ -29,6 +29,13 @@ export interface ProductoProxy {
    * "agotado" y deshabilitamos el boton de compra.
    */
   existencias: number | null;
+  /**
+   * true si el producto esta marcado como ACTIVO en el ERP. Se agrego al
+   * contrato pero AUN NO FILTRAMOS por el, hay que confirmar con el cliente
+   * que significan los estados del ERP antes de usarlo como criterio de
+   * publicacion.
+   */
+  activo: boolean;
 }
 
 /**
