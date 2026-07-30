@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Dulcería y snacks">
+  <rect width="400" height="400" fill="#E91E8C"/>
+  <circle cx="200" cy="140" r="65" fill="#fff"/>
+    <circle cx="200" cy="140" r="45" fill="none" stroke="#E91E8C" stroke-width="8"/>
+    <circle cx="200" cy="140" r="25" fill="none" stroke="#E91E8C" stroke-width="8"/>
+    <rect x="192" y="200" width="16" height="55" fill="#fff"/>
+  <text x="200" y="342" text-anchor="middle" fill="#ffffff"
+        font-family="Nunito, system-ui, sans-serif" font-weight="900"
+        font-size="30" letter-spacing="1">DULCERÍA Y SNACKS</text>
+  <text x="200" y="374" text-anchor="middle" fill="#ffffff"
+        font-family="Nunito, system-ui, sans-serif" font-weight="700"
+        font-size="14" letter-spacing="3" opacity="0.7">BIG BANG</text>
+</svg>

@@ -1,0 +1,306 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.bb-why-root {
+  font-family: 'Nunito', sans-serif;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  max-width: 100vw;
+  background: #fff;
+  overflow: hidden;
+  padding: 72px 48px;
+}
+
+/* Acento de fondo */
+.bb-why-root::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #E91E8C 0%, #7DC720 50%, #3D1A6E 100%);
+}
+
+.bb-why-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.bb-why-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: end;
+  margin-bottom: 56px;
+}
+
+.bb-why-label {
+  display: inline-block;
+  background: rgba(233,30,140,0.08);
+  color: #E91E8C;
+  font-size: 11px;
+  font-weight: 900;
+  padding: 5px 14px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  margin-bottom: 14px;
+}
+
+.bb-why-title {
+  font-size: clamp(26px, 3vw, 40px);
+  font-weight: 900;
+  color: #1a1a2e;
+  line-height: 1.12;
+  letter-spacing: -0.5px;
+}
+
+.bb-why-title span { color: #E91E8C; }
+
+.bb-why-right-text {
+  font-size: 15px;
+  color: #666;
+  font-weight: 600;
+  line-height: 1.7;
+  padding-bottom: 4px;
+  border-left: 3px solid #7DC720;
+  padding-left: 20px;
+}
+
+/* Grid de razones */
+.bb-why-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.bb-why-card {
+  position: relative;
+  padding: 32px 28px;
+  border-radius: 16px;
+  border: 1.5px solid rgba(61,26,110,0.07);
+  background: #fff;
+  transition: all 0.28s;
+  overflow: hidden;
+  cursor: default;
+}
+
+.bb-why-card::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--card-color, #E91E8C);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.28s;
+}
+
+.bb-why-card:hover {
+  border-color: transparent;
+  box-shadow: 0 12px 40px rgba(61,26,110,0.10);
+  transform: translateY(-4px);
+  background: #fefefe;
+}
+
+.bb-why-card:hover::before {
+  transform: scaleX(1);
+}
+
+/* Número grande de fondo */
+.bb-why-num {
+  position: absolute;
+  top: 16px; right: 20px;
+  font-size: 64px;
+  font-weight: 900;
+  color: rgba(61,26,110,0.04);
+  line-height: 1;
+  user-select: none;
+  transition: color 0.28s;
+}
+
+.bb-why-card:hover .bb-why-num {
+  color: rgba(61,26,110,0.07);
+}
+
+.bb-why-icon {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  background: var(--card-bg, rgba(233,30,140,0.08));
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
+  transition: transform 0.28s;
+}
+
+.bb-why-card:hover .bb-why-icon {
+  transform: scale(1.10) rotate(-4deg);
+}
+
+.bb-why-card-title {
+  font-size: 16px;
+  font-weight: 900;
+  color: #1a1a2e;
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
+
+.bb-why-card-text {
+  font-size: 13.5px;
+  color: #777;
+  font-weight: 600;
+  line-height: 1.65;
+}
+
+/* Stat bar debajo del grid */
+.bb-why-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin-top: 48px;
+  background: #3D1A6E;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.bb-why-stat {
+  padding: 28px 24px;
+  text-align: center;
+  border-right: 1px solid rgba(255,255,255,0.08);
+  transition: background 0.2s;
+}
+
+.bb-why-stat:last-child { border-right: none; }
+.bb-why-stat:hover { background: rgba(255,255,255,0.05); }
+
+.bb-why-stat-num {
+  font-size: 32px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.5px;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.bb-why-stat-num span { color: #7DC720; }
+
+.bb-why-stat-label {
+  font-size: 12px;
+  color: rgba(255,255,255,0.50);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+@media (max-width: 900px) {
+  .bb-why-root { padding: 52px 22px; }
+  .bb-why-header { grid-template-columns: 1fr; gap: 20px; }
+  .bb-why-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .bb-why-stats { grid-template-columns: repeat(2, 1fr); }
+  .bb-why-stat:nth-child(2) { border-right: none; }
+  .bb-why-stat:nth-child(3) { border-top: 1px solid rgba(255,255,255,0.08); }
+  .bb-why-stat:nth-child(4) { border-top: 1px solid rgba(255,255,255,0.08); border-right: none; }
+}
+
+@media (max-width: 540px) {
+  .bb-why-root { padding: 44px 16px; }
+  .bb-why-grid { grid-template-columns: 1fr; }
+  .bb-why-stats { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+
+<div class="bb-why-root">
+  <div class="bb-why-inner">
+
+    <div class="bb-why-header">
+      <div>
+        <div class="bb-why-label">¿Por qué Big Bang?</div>
+        <h2 class="bb-why-title">No somos una tienda más.<br>Somos tu aliado para <span>celebrar</span></h2>
+      </div>
+      <div>
+        <p class="bb-why-right-text">
+          Llevamos años haciendo que las fiestas de las familias caleñas sean inolvidables. Cada producto que vendemos está pensado para que tú solo te preocupes por disfrutar.
+        </p>
+      </div>
+    </div>
+
+    <div class="bb-why-grid">
+
+      <div class="bb-why-card" style="--card-color:#E91E8C; --card-bg:rgba(233,30,140,0.07)">
+        <div class="bb-why-num">01</div>
+        <div class="bb-why-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E91E8C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        </div>
+        <div class="bb-why-card-title">Variedad que sorprende</div>
+        <p class="bb-why-card-text">Más de 500 productos en juguetes, piñatería, peluches y decoración. Siempre encontrarás lo que buscas — y lo que no sabías que necesitabas.</p>
+      </div>
+
+      <div class="bb-why-card" style="--card-color:#7DC720; --card-bg:rgba(125,199,32,0.08)">
+        <div class="bb-why-num">02</div>
+        <div class="bb-why-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7DC720" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        </div>
+        <div class="bb-why-card-title">Precios para todos los bolsillos</div>
+        <p class="bb-why-card-text">Vendemos al detal y al por mayor. Si buscas surtir tu negocio o comprar para una sola fiesta, tenemos el precio que te conviene.</p>
+      </div>
+
+      <div class="bb-why-card" style="--card-color:#3D1A6E; --card-bg:rgba(61,26,110,0.07)">
+        <div class="bb-why-num">03</div>
+        <div class="bb-why-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3D1A6E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        </div>
+        <div class="bb-why-card-title">Envíos a toda Colombia</div>
+        <p class="bb-why-card-text">Despachamos a cualquier ciudad del país de forma rápida y segura. En Cali también hacemos entregas programadas sin costo adicional.</p>
+      </div>
+
+      <div class="bb-why-card" style="--card-color:#E91E8C; --card-bg:rgba(233,30,140,0.07)">
+        <div class="bb-why-num">04</div>
+        <div class="bb-why-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E91E8C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="bb-why-card-title">Compra 100% segura</div>
+        <p class="bb-why-card-text">Pagos protegidos con PayU. Aceptamos tarjetas débito, crédito, PSE y efectivo. Tu dinero y tus datos siempre están protegidos.</p>
+      </div>
+
+      <div class="bb-why-card" style="--card-color:#7DC720; --card-bg:rgba(125,199,32,0.08)">
+        <div class="bb-why-num">05</div>
+        <div class="bb-why-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7DC720" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        </div>
+        <div class="bb-why-card-title">Atención que de verdad ayuda</div>
+        <p class="bb-why-card-text">Nuestro equipo responde por WhatsApp de lunes a sábado. Sin bots, sin esperas eternas. Una persona real que te orienta y resuelve.</p>
+      </div>
+
+      <div class="bb-why-card" style="--card-color:#3D1A6E; --card-bg:rgba(61,26,110,0.07)">
+        <div class="bb-why-num">06</div>
+        <div class="bb-why-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3D1A6E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div class="bb-why-card-title">Siempre hay algo nuevo</div>
+        <p class="bb-why-card-text">Renovamos nuestro catálogo constantemente con las últimas tendencias en juguetes y decoración. Cada visita trae una sorpresa nueva.</p>
+      </div>
+
+    </div>
+
+    <div class="bb-why-stats">
+      <div class="bb-why-stat">
+        <div class="bb-why-stat-num">+<span>500</span></div>
+        <div class="bb-why-stat-label">Productos</div>
+      </div>
+      <div class="bb-why-stat">
+        <div class="bb-why-stat-num"><span>4.5</span>★</div>
+        <div class="bb-why-stat-label">Calificación Google</div>
+      </div>
+      <div class="bb-why-stat">
+        <div class="bb-why-stat-num">+<span>10</span></div>
+        <div class="bb-why-stat-label">Años en el mercado</div>
+      </div>
+      <div class="bb-why-stat">
+        <div class="bb-why-stat-num"><span>100</span>%</div>
+        <div class="bb-why-stat-label">Pago seguro</div>
+      </div>
+    </div>
+
+  </div>
+</div>

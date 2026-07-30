@@ -1,0 +1,210 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap');
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.bb-cats-root {
+  font-family: 'Nunito', sans-serif;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  max-width: 100vw;
+  background: #F7F7F7;
+  padding: 60px 48px;
+  overflow: hidden;
+}
+
+.bb-cats-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+.bb-cats-label {
+  display: inline-block;
+  background: rgba(233,30,140,0.10);
+  color: #E91E8C;
+  font-size: 11px; font-weight: 900;
+  padding: 5px 14px; border-radius: 20px;
+  text-transform: uppercase; letter-spacing: 0.10em;
+  margin-bottom: 10px;
+}
+.bb-cats-title {
+  font-size: clamp(24px, 2.8vw, 36px);
+  font-weight: 900; color: #1a1a2e; line-height: 1.15;
+}
+.bb-cats-title span { color: #E91E8C; }
+
+.bb-cats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.bb-cat-card {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  text-decoration: none;
+  display: block;
+  aspect-ratio: 3/4;
+  transition: transform 0.24s, box-shadow 0.24s;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.10);
+}
+.bb-cat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.16);
+}
+
+.bb-cat-bg {
+  width: 100%; height: 100%;
+  position: absolute; inset: 0;
+  transition: transform 0.4s;
+}
+.bb-cat-card:hover .bb-cat-bg { transform: scale(1.05); }
+
+.bb-cat-bg.juguetes  { background: linear-gradient(135deg, #E91E8C 0%, #c4177a 100%); }
+.bb-cat-bg.pinateria { background: linear-gradient(135deg, #7DC720 0%, #5fa018 100%); }
+.bb-cat-bg.peluches  { background: linear-gradient(135deg, #3D1A6E 0%, #5a2ba0 100%); }
+.bb-cat-bg.deco      { background: linear-gradient(135deg, #c4177a 0%, #3D1A6E 100%); }
+
+.bb-cat-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.05) 55%, transparent 100%);
+  z-index: 1;
+}
+
+.bb-cat-icon-wrap {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -58%);
+  z-index: 2; opacity: 0.28;
+  transition: opacity 0.3s;
+}
+.bb-cat-card:hover .bb-cat-icon-wrap { opacity: 0.14; }
+
+.bb-cat-info {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 18px 16px 16px;
+  z-index: 2;
+}
+.bb-cat-name { font-size: 17px; font-weight: 900; color: #fff; line-height: 1.1; margin-bottom: 3px; }
+.bb-cat-count { font-size: 11px; color: rgba(255,255,255,0.60); font-weight: 700; }
+
+.bb-cat-arrow {
+  position: absolute;
+  bottom: 16px; right: 14px;
+  width: 30px; height: 30px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+  z-index: 2;
+}
+.bb-cat-card:hover .bb-cat-arrow { background: #E91E8C; }
+
+.bb-cats-cta {
+  text-align: center;
+  margin-top: 32px;
+}
+.bb-cats-cta a {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #3D1A6E; color: #fff;
+  font-size: 14px; font-weight: 800;
+  padding: 13px 30px; border-radius: 8px;
+  text-decoration: none; transition: all 0.22s;
+  font-family: 'Nunito', sans-serif;
+  box-shadow: 0 4px 14px rgba(61,26,110,0.22);
+}
+.bb-cats-cta a:hover {
+  background: #E91E8C;
+  box-shadow: 0 6px 18px rgba(233,30,140,0.32);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 860px) {
+  .bb-cats-root { padding: 44px 22px; }
+  .bb-cats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+}
+@media (max-width: 480px) {
+  .bb-cats-root { padding: 36px 16px; }
+  .bb-cat-name { font-size: 15px; }
+}
+</style>
+
+<div class="bb-cats-root">
+  <div class="bb-cats-header">
+    <div class="bb-cats-label">Categorías</div>
+    <h2 class="bb-cats-title">Encuentra lo que necesitas<br>para <span>celebrar</span></h2>
+  </div>
+
+  <div class="bb-cats-grid">
+    <a href="/tienda/juguetes" class="bb-cat-card">
+      <div class="bb-cat-bg juguetes"></div>
+      <div class="bb-cat-overlay"></div>
+      <div class="bb-cat-icon-wrap">
+        <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </div>
+      <div class="bb-cat-info">
+        <div class="bb-cat-name">Juguetes</div>
+        <div class="bb-cat-count">+200 referencias</div>
+      </div>
+      <div class="bb-cat-arrow">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </a>
+
+    <a href="/tienda/pinateria" class="bb-cat-card">
+      <div class="bb-cat-bg pinateria"></div>
+      <div class="bb-cat-overlay"></div>
+      <div class="bb-cat-icon-wrap">
+        <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+      </div>
+      <div class="bb-cat-info">
+        <div class="bb-cat-name">Piñatería</div>
+        <div class="bb-cat-count">Piñatas y decoración</div>
+      </div>
+      <div class="bb-cat-arrow">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </a>
+
+    <a href="/tienda/peluches" class="bb-cat-card">
+      <div class="bb-cat-bg peluches"></div>
+      <div class="bb-cat-overlay"></div>
+      <div class="bb-cat-icon-wrap">
+        <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      </div>
+      <div class="bb-cat-info">
+        <div class="bb-cat-name">Peluches</div>
+        <div class="bb-cat-count">Para regalar con amor</div>
+      </div>
+      <div class="bb-cat-arrow">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </a>
+
+    <a href="/tienda/decoracion" class="bb-cat-card">
+      <div class="bb-cat-bg deco"></div>
+      <div class="bb-cat-overlay"></div>
+      <div class="bb-cat-icon-wrap">
+        <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+      <div class="bb-cat-info">
+        <div class="bb-cat-name">Decoración</div>
+        <div class="bb-cat-count">Fiestas y eventos</div>
+      </div>
+      <div class="bb-cat-arrow">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </a>
+  </div>
+
+  <div class="bb-cats-cta">
+    <a href="/tienda">
+      Ver todo el catálogo
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+  </div>
+</div>

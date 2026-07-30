@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Escolar">
+  <rect width="400" height="400" fill="#7DC720"/>
+  <polygon points="120,220 155,220 155,140 165,120 145,110 137,130 137,220" fill="#fff"/>
+    <rect x="137" y="145" width="18" height="14" fill="#7DC720"/>
+    <polygon points="137,220 155,220 146,240" fill="#fff"/>
+    <rect x="180" y="130" width="90" height="16" fill="#fff"/>
+    <rect x="180" y="160" width="70" height="12" fill="#fff"/>
+    <rect x="180" y="188" width="80" height="12" fill="#fff"/>
+  <text x="200" y="342" text-anchor="middle" fill="#ffffff"
+        font-family="Nunito, system-ui, sans-serif" font-weight="900"
+        font-size="30" letter-spacing="1">ESCOLAR</text>
+  <text x="200" y="374" text-anchor="middle" fill="#ffffff"
+        font-family="Nunito, system-ui, sans-serif" font-weight="700"
+        font-size="14" letter-spacing="3" opacity="0.7">BIG BANG</text>
+</svg>

@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+/*
+ * Tokens de marca de Tiendas Big Bang. En Tailwind v4 los tokens se declaran
+ * dentro de @theme y quedan disponibles como utilidades (bg-rosa, text-verde,
+ * etc.). El bloque font-family expone la fuente cargada por next/font como
+ * variable CSS `--font-nunito` en el root layout.
+ */
+@theme {
+  --color-rosa: #E91E8C;
+  --color-verde: #7DC720;
+  --color-morado: #3D1A6E;
+  --color-tinta: #1A1A2E;
+  --color-gris: #F7F7F7;
+  --color-whatsapp: #25D366;
+
+  --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+}
+
+/*
+ * Escotilla de escape acotada — todo lo que Tailwind no cubre bien:
+ * keyframes complejas, radial-gradient con paradas, pseudo-elementos con
+ * contenido y backdrop-filter. Un solo sistema con una escape hatch
+ * documentada, no dos sistemas conviviendo.
+ */
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-color: #ffffff;
+  color: var(--color-tinta);
+  font-family: var(--font-sans);
+}

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Tecnología y electrónica">
+  <rect width="400" height="400" fill="#3D1A6E"/>
+  <path d="M120,180 Q120,110 200,110 Q280,110 280,180" fill="none" stroke="#fff" stroke-width="14"/>
+    <rect x="110" y="175" width="34" height="60" rx="10" fill="#fff"/>
+    <rect x="256" y="175" width="34" height="60" rx="10" fill="#fff"/>
+  <text x="200" y="342" text-anchor="middle" fill="#ffffff"
+        font-family="Nunito, system-ui, sans-serif" font-weight="900"
+        font-size="30" letter-spacing="1">TECNOLOGÍA Y ELECTRÓNICA</text>
+  <text x="200" y="374" text-anchor="middle" fill="#ffffff"
+        font-family="Nunito, system-ui, sans-serif" font-weight="700"
+        font-size="14" letter-spacing="3" opacity="0.7">BIG BANG</text>
+</svg>

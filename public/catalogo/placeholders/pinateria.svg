@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Piñatería">
+  <rect width="400" height="400" fill="#E91E8C"/>
+  <ellipse cx="200" cy="150" rx="58" ry="72" fill="#fff"/>
+    <polygon points="192,222 208,222 200,238" fill="#fff"/>
+    <path d="M200,238 Q210,255 195,270 Q210,285 195,300" fill="none" stroke="#fff" stroke-width="4"/>
+    <ellipse cx="185" cy="130" rx="10" ry="16" fill="#E91E8C" opacity="0.35"/>
+  <text x="200" y="342" text-anchor="middle" fill="#ffffff"
+        font-family="Nunito, system-ui, sans-serif" font-weight="900"
+        font-size="30" letter-spacing="1">PIÑATERÍA</text>
+  <text x="200" y="374" text-anchor="middle" fill="#ffffff"
+        font-family="Nunito, system-ui, sans-serif" font-weight="700"
+        font-size="14" letter-spacing="3" opacity="0.7">BIG BANG</text>
+</svg>

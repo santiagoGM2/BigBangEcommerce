@@ -1,0 +1,278 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.bb-nav-root {
+  font-family: 'Nunito', sans-serif;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  max-width: 100vw;
+  overflow: hidden;
+  background: #fff;
+}
+
+.bb-nav {
+  width: 100%;
+  background: #fff;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+  box-shadow: 0 1px 0 rgba(61,26,110,0.08);
+  position: relative;
+}
+
+.bb-nav-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  flex-shrink: 0;
+  height: 72px;
+  overflow: hidden;
+}
+
+.bb-nav-logo img {
+  height: 52px;
+  width: auto;
+  max-width: 120px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  display: block;
+  flex-shrink: 0;
+}
+
+.bb-nav-links {
+  display: flex;
+  gap: 2px;
+  list-style: none;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.bb-nav-links a {
+  text-decoration: none;
+  color: #222;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 7px 14px;
+  border-radius: 22px;
+  transition: all 0.18s;
+  display: block;
+}
+
+.bb-nav-links a:hover,
+.bb-nav-links a.active {
+  color: #E91E8C;
+  background: rgba(233,30,140,0.06);
+}
+
+.bb-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.bb-wpp-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #25D366;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 8px 16px;
+  border-radius: 22px;
+  text-decoration: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+  font-family: 'Nunito', sans-serif;
+}
+.bb-wpp-pill:hover { transform: translateY(-1px); }
+
+.bb-nav-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: #E91E8C;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 22px;
+  font-weight: 800;
+  font-size: 13px;
+  text-decoration: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(233,30,140,0.30);
+  font-family: 'Nunito', sans-serif;
+}
+.bb-nav-cta:hover {
+  background: #7DC720;
+  transform: translateY(-1px);
+}
+
+.bb-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 6px;
+  background: none;
+  border: none;
+}
+.bb-hamburger span {
+  width: 22px; height: 2px;
+  background: #3D1A6E;
+  border-radius: 2px;
+  display: block;
+}
+
+.bb-mobile-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(61,26,110,0.40);
+  z-index: 9998;
+}
+.bb-mobile-overlay.open { display: block; }
+
+.bb-mobile-menu {
+  position: fixed;
+  top: 0; right: -100%;
+  width: min(300px, 88vw);
+  height: 100vh;
+  background: #fff;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -4px 0 28px rgba(0,0,0,0.14);
+  transition: right 0.28s cubic-bezier(.4,0,.2,1);
+  font-family: 'Nunito', sans-serif;
+}
+.bb-mobile-menu.open { right: 0; }
+
+.bb-mobile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(0,0,0,0.07);
+}
+.bb-mobile-header img { height: 44px; mix-blend-mode: multiply; }
+
+.bb-mobile-close {
+  width: 34px; height: 34px;
+  border: none;
+  background: #F5F5F5;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 17px;
+  color: #555;
+  transition: all 0.18s;
+}
+.bb-mobile-close:hover { background: #E91E8C; color: #fff; }
+
+.bb-mobile-links { padding: 16px 0; flex: 1; }
+.bb-mobile-links a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  color: #222;
+  font-weight: 700;
+  font-size: 15px;
+  text-decoration: none;
+  transition: all 0.15s;
+}
+.bb-mobile-links a:hover {
+  color: #E91E8C;
+  background: rgba(233,30,140,0.05);
+  padding-left: 30px;
+}
+
+.bb-mobile-footer {
+  padding: 18px 22px;
+  border-top: 1px solid rgba(0,0,0,0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.bb-mobile-footer .bb-nav-cta,
+.bb-mobile-footer .bb-wpp-pill { justify-content: center; }
+
+@media (max-width: 900px) {
+  .bb-nav-links, .bb-wpp-pill { display: none; }
+  .bb-hamburger { display: flex; }
+  .bb-nav { padding: 0 20px; height: 64px; }
+  .bb-nav-logo img { height: 44px; max-width: 100px; }
+  .bb-nav-logo { height: 64px; }
+}
+</style>
+
+<div class="bb-nav-root">
+  <nav class="bb-nav">
+    <a href="/inicio" class="bb-nav-logo">
+      <img src="https://i.ibb.co/1tYVtmMx/Whats-App-Image-2026-04-01-at-11-17-31-AM.jpg" alt="Big Bang Piñatas" />
+    </a>
+    <ul class="bb-nav-links">
+      <li><a href="/inicio" class="active">Inicio</a></li>
+      <li><a href="/https://app.neurovialatam.com/v2/preview/EoFIuAwxk4HsiPLehTfS?notrack=true">Tienda</a></li>
+      <li><a href="/categorias">Categorías</a></li>
+      <li><a href="/nosotros">Nosotros</a></li>
+      <li><a href="/contacto">Contacto</a></li>
+    </ul>
+    <div class="bb-nav-right">
+      <a href="https://api.whatsapp.com/send?phone=573215581600" target="_blank" class="bb-wpp-pill">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        WhatsApp
+      </a>
+      <a href="/tienda" class="bb-nav-cta">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        Ver tienda
+      </a>
+      <button class="bb-hamburger" id="bbHamburger">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+</div>
+
+<div class="bb-mobile-overlay" id="bbOverlay" onclick="closeBBMenu()"></div>
+<div class="bb-mobile-menu" id="bbMenu">
+  <div class="bb-mobile-header">
+    <img src="https://i.ibb.co/1tYVtmMx/Whats-App-Image-2026-04-01-at-11-17-31-AM.jpg" alt="Big Bang" />
+    <button class="bb-mobile-close" onclick="closeBBMenu()">✕</button>
+  </div>
+  <div class="bb-mobile-links">
+    <a href="/inicio">Inicio</a>
+    <a href="/tienda">Tienda</a>
+    <a href="/categorias">Categorías</a>
+    <a href="/nosotros">Nosotros</a>
+    <a href="/contacto">Contacto</a>
+  </div>
+  <div class="bb-mobile-footer">
+    <a href="/tienda" class="bb-nav-cta">Ver tienda</a>
+    <a href="https://api.whatsapp.com/send?phone=573215581600" target="_blank" class="bb-wpp-pill">+57 321 558 1600</a>
+  </div>
+</div>
+
+<script>
+function closeBBMenu() {
+  document.getElementById('bbMenu').classList.remove('open');
+  document.getElementById('bbOverlay').classList.remove('open');
+}
+document.getElementById('bbHamburger').addEventListener('click', function() {
+  document.getElementById('bbMenu').classList.add('open');
+  document.getElementById('bbOverlay').classList.add('open');
+});
+</script>
+
+
+
+

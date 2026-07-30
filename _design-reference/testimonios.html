@@ -1,0 +1,571 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.bb-test-root {
+  font-family: 'Nunito', sans-serif;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  max-width: 100vw;
+  background: #F7F7F7;
+  overflow: hidden;
+  padding: 72px 48px;
+}
+
+.bb-test-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.bb-test-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.bb-test-label {
+  display: inline-block;
+  background: rgba(233,30,140,0.08);
+  color: #E91E8C;
+  font-size: 11px;
+  font-weight: 900;
+  padding: 5px 14px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  margin-bottom: 14px;
+}
+
+.bb-test-title {
+  font-size: clamp(24px, 3vw, 38px);
+  font-weight: 900;
+  color: #1a1a2e;
+  line-height: 1.12;
+  letter-spacing: -0.5px;
+  margin-bottom: 10px;
+}
+
+.bb-test-title span { color: #E91E8C; }
+
+.bb-test-subtitle {
+  font-size: 14px;
+  color: #999;
+  font-weight: 600;
+}
+
+.bb-test-rating-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 44px;
+  padding: 18px 28px;
+  background: #fff;
+  border-radius: 14px;
+  border: 1.5px solid rgba(61,26,110,0.07);
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  text-decoration: none;
+  transition: box-shadow 0.22s, transform 0.22s;
+  cursor: pointer;
+}
+
+.bb-test-rating-bar:hover {
+  box-shadow: 0 6px 20px rgba(0,0,0,0.10);
+  transform: translateY(-2px);
+}
+
+.bb-rating-big {
+  font-size: 48px;
+  font-weight: 900;
+  color: #1a1a2e;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+.bb-rating-right { text-align: left; }
+
+.bb-stars-row {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 4px;
+}
+
+.bb-star {
+  color: #FFB800;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.bb-star.half {
+  position: relative;
+  display: inline-block;
+  color: #FFB800;
+}
+
+.bb-rating-count {
+  font-size: 12px;
+  color: #999;
+  font-weight: 700;
+}
+
+.bb-google-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #555;
+  padding-left: 16px;
+  border-left: 1px solid rgba(0,0,0,0.08);
+}
+
+.bb-test-carousel {
+  position: relative;
+  overflow: hidden;
+}
+
+.bb-test-track-wrap {
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.bb-test-track {
+  display: flex;
+  gap: 20px;
+  transition: transform 0.48s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.bb-test-card {
+  flex: 0 0 calc(33.333% - 14px);
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 26px;
+  border: 1.5px solid rgba(61,26,110,0.06);
+  position: relative;
+  transition: box-shadow 0.24s, transform 0.24s;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.bb-test-card:hover {
+  box-shadow: 0 10px 32px rgba(61,26,110,0.09);
+  transform: translateY(-3px);
+}
+
+.bb-test-card::before {
+  content: '"';
+  position: absolute;
+  top: 16px; right: 22px;
+  font-size: 72px;
+  font-weight: 900;
+  color: rgba(233,30,140,0.07);
+  line-height: 1;
+  font-family: Georgia, serif;
+}
+
+.bb-card-stars {
+  display: flex;
+  gap: 2px;
+}
+
+.bb-card-star {
+  color: #FFB800;
+  font-size: 14px;
+}
+
+.bb-card-text {
+  font-size: 14px;
+  color: #444;
+  font-weight: 600;
+  line-height: 1.70;
+  flex: 1;
+}
+
+.bb-card-text em {
+  font-style: normal;
+  color: #E91E8C;
+  font-weight: 700;
+}
+
+.bb-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+
+.bb-card-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--avatar-bg, #E91E8C);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px;
+  font-weight: 900;
+  color: #fff;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.bb-card-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.bb-card-name {
+  font-size: 14px;
+  font-weight: 800;
+  color: #1a1a2e;
+  line-height: 1.2;
+}
+
+.bb-card-meta {
+  font-size: 11px;
+  color: #aaa;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.bb-card-google {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.bb-test-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.bb-test-btn {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(61,26,110,0.15);
+  background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #3D1A6E;
+}
+
+.bb-test-btn:hover {
+  background: #E91E8C;
+  border-color: #E91E8C;
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.bb-test-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.bb-test-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(61,26,110,0.15);
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.bb-test-dot.active {
+  background: #E91E8C;
+  width: 22px;
+  border-radius: 4px;
+}
+
+.bb-test-google-cta {
+  text-align: center;
+  margin-top: 36px;
+}
+
+.bb-test-google-cta a {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  color: #333;
+  font-size: 14px;
+  font-weight: 800;
+  padding: 14px 28px;
+  border-radius: 10px;
+  text-decoration: none;
+  border: 1.5px solid rgba(0,0,0,0.10);
+  transition: all 0.22s;
+  font-family: 'Nunito', sans-serif;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+
+.bb-test-google-cta a:hover {
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  transform: translateY(-1px);
+  border-color: rgba(0,0,0,0.15);
+}
+
+@media (max-width: 900px) {
+  .bb-test-root { padding: 52px 22px; }
+  .bb-test-card { flex: 0 0 calc(50% - 10px); }
+  .bb-rating-big { font-size: 40px; }
+}
+
+@media (max-width: 600px) {
+  .bb-test-root { padding: 44px 16px; }
+  .bb-test-card { flex: 0 0 calc(100%); }
+  .bb-test-rating-bar { flex-direction: column; gap: 10px; text-align: center; }
+  .bb-google-badge { border-left: none; border-top: 1px solid rgba(0,0,0,0.08); padding-left: 0; padding-top: 10px; justify-content: center; }
+}
+</style>
+
+<div class="bb-test-root">
+  <div class="bb-test-inner">
+
+    <div class="bb-test-header">
+      <div class="bb-test-label">Reseñas verificadas</div>
+      <h2 class="bb-test-title">Lo que dicen nuestros <span>clientes</span></h2>
+      <p class="bb-test-subtitle">Reseñas reales de familias que celebraron con nosotros</p>
+    </div>
+
+    <a class="bb-test-rating-bar" href="https://www.google.com/maps/place/Pi%C3%B1atas+y+Regalos+Big+Bang" target="_blank">
+      <div class="bb-rating-big">4.5</div>
+      <div class="bb-rating-right">
+        <div class="bb-stars-row">
+          <span class="bb-star">★</span>
+          <span class="bb-star">★</span>
+          <span class="bb-star">★</span>
+          <span class="bb-star">★</span>
+          <span class="bb-star">★</span>
+        </div>
+        <div class="bb-rating-count">Basado en +510 reseñas</div>
+      </div>
+      <div class="bb-google-badge">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Ver en Google Maps
+      </div>
+    </a>
+
+    <div class="bb-test-carousel">
+      <div class="bb-test-track-wrap">
+        <div class="bb-test-track" id="bbTestTrack">
+
+          <div class="bb-test-card">
+            <div class="bb-card-stars">
+              <span class="bb-card-star">★</span><span class="bb-card-star">★</span><span class="bb-card-star">★</span><span class="bb-card-star">★</span><span class="bb-card-star">★</span>
+            </div>
+            <p class="bb-card-text">
+              "Bastante surtido en accesorios, prendas y máscaras para disfraces. <em>Buenos precios.</em> Las capas de Harry Potter y elementos para el disfraz están muy buenos."
+            </p>
+            <div class="bb-card-footer">
+              <div class="bb-card-avatar" style="--avatar-bg:#E91E8C">
+                <img src="https://lh3.googleusercontent.com/a-/ALV-UjVT-fPdXPyo2Z_IZOzkAMhsd3xacv1bwbQ91mhV-FaYn-uxPb86=w72-h72-p-rp-mo-ba4-br100" alt="Carlos Andrés Barrera" onerror="this.style.display='none';this.parentElement.innerHTML='CB';">
+              </div>
+              <div>
+                <div class="bb-card-name">Carlos Andrés Barrera</div>
+                <div class="bb-card-meta">Cali · hace 5 meses</div>
+              </div>
+              <div class="bb-card-google">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="bb-test-card">
+            <div class="bb-card-stars">
+              <span class="bb-card-star">★</span><span class="bb-card-star">★</span><span class="bb-card-star">★</span><span class="bb-card-star">★</span><span class="bb-card-star">★</span>
+            </div>
+            <p class="bb-card-text">
+              "Excelente, este almacén tiene de todo para disfraces y fiestas: sombreros, máscaras, pelucas, gafas, accesorios, pinturas, decoración. <em>Es MUY completo el surtido.</em> Los precios son adecuados y hay opciones para todos los presupuestos. La atención es muy buena, son muy atentos y amables."
+            </p>
+            <div class="bb-card-footer">
+              <div class="bb-card-avatar" style="--avatar-bg:#3D1A6E">
+                <img src="https://lh3.googleusercontent.com/a-/ALV-UjVjngmvoTM0Krayol552VKtwvKzZAx-jwV5fsmo9B42CBGlI-I=w72-h72-p-rp-mo-ba5-br100" alt="Carlos Ardila Díaz" onerror="this.style.display='none';this.parentElement.innerHTML='CA';">
+              </div>
+              <div>
+                <div class="bb-card-name">Carlos Ardila Díaz</div>
+                <div class="bb-card-meta">Cali · hace 5 meses</div>
+              </div>
+              <div class="bb-card-google">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="bb-test-card">
+            <div class="bb-card-stars">
+              <span class="bb-card-star">★</span><span class="bb-card-star">★</span><span class="bb-card-star">★</span><span class="bb-card-star">★</span><span class="bb-card-star">★</span>
+            </div>
+            <p class="bb-card-text">
+              "El precio de piñatería y decoración para fiestas me parece estándar. <em>Cuentan con gran variedad de productos.</em> Me gusta adquirir los regalos para los premios de mis celebraciones de cumpleaños, y su atención es buena."
+            </p>
+            <div class="bb-card-footer">
+              <div class="bb-card-avatar" style="--avatar-bg:#7DC720">
+                <img src="https://lh3.googleusercontent.com/a-/ALV-UjUGQmqkLpfWGZA_rr3oVgmPmg9CV1ckFqcH51m7Jjll0YWKmVgycQ=w72-h72-p-rp-mo-ba3-br100" alt="David Parra" onerror="this.style.display='none';this.parentElement.innerHTML='DP';">
+              </div>
+              <div>
+                <div class="bb-card-name">David Parra</div>
+                <div class="bb-card-meta">Cali · hace 2 meses</div>
+              </div>
+              <div class="bb-card-google">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="bb-test-card">
+            <div class="bb-card-stars">
+              <span class="bb-card-star">★</span><span class="bb-card-star">★</span><span class="bb-card-star">★</span><span class="bb-card-star">★</span><span class="bb-card-star">★</span>
+            </div>
+            <p class="bb-card-text">
+              "Excelente lugar, encuentras todo lo que buscas para decoración de fiestas. <em>Me encanta la atención</em> — sus empleados trabajan a gusto, tienen mucho carisma y son excelentes en lo que hacen. Siempre dispuestos a dar la mejor asesoría."
+            </p>
+            <div class="bb-card-footer">
+              <div class="bb-card-avatar" style="--avatar-bg:#E91E8C">
+                <img src="https://lh3.googleusercontent.com/a-/ALV-UjXhrXEgcfrIvPy45WxWGJSps2DfhcHcKXDEkLzODqFIvB9PlCy23A=w72-h72-p-rp-mo-ba4-br100" alt="Diana Montaño" onerror="this.style.display='none';this.parentElement.innerHTML='DM';">
+              </div>
+              <div>
+                <div class="bb-card-name">Diana Montaño</div>
+                <div class="bb-card-meta">Cali · hace 3 meses</div>
+              </div>
+              <div class="bb-card-google">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="bb-test-card">
+            <div class="bb-card-stars">
+              <span class="bb-card-star">★</span><span class="bb-card-star">★</span><span class="bb-card-star">★</span><span class="bb-card-star">★</span><span class="bb-card-star" style="color:#DDD;">★</span>
+            </div>
+            <p class="bb-card-text">
+              "Este sitio es de los más completos en decoración para fiestas y souvenirs. <em>Tiene muchísima variedad y estilos</em> para elegir a nivel de temáticas. Lo único es que los pasillos son pequeños, pero es debido a la gran oferta de productos que tienen."
+            </p>
+            <div class="bb-card-footer">
+              <div class="bb-card-avatar" style="--avatar-bg:#3D1A6E">
+                <img src="https://lh3.googleusercontent.com/a-/ALV-UjV3CGababGgxtAyFrZEfEHX9Npc0ctEeIxWEKWdWnuSLDEg7ZW_OQ=w72-h72-p-rp-mo-ba5-br100" alt="Hanerth Hernández" onerror="this.style.display='none';this.parentElement.innerHTML='HH';">
+              </div>
+              <div>
+                <div class="bb-card-name">Hanerth Hernández</div>
+                <div class="bb-card-meta">Cali · hace 1 mes</div>
+              </div>
+              <div class="bb-card-google">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="bb-test-card">
+            <div class="bb-card-stars">
+              <span class="bb-card-star">★</span><span class="bb-card-star">★</span><span class="bb-card-star">★</span><span class="bb-card-star">★</span><span class="bb-card-star" style="color:#DDD;">★</span>
+            </div>
+            <p class="bb-card-text">
+              "<em>Variedad en juguetes, accesorios y complementos</em> para fiestas y reuniones. Buen lugar para encontrar todo lo que necesitas en un solo sitio."
+            </p>
+            <div class="bb-card-footer">
+              <div class="bb-card-avatar" style="--avatar-bg:#7DC720">
+                <img src="https://lh3.googleusercontent.com/a-/ALV-UjXh4X8q1t6AzPGUIipwyucI3FgFQErJKT2SsigZxBaaCNIG8RiE2w=w72-h72-p-rp-mo-ba6-br100" alt="Christhian Cobo" onerror="this.style.display='none';this.parentElement.innerHTML='CC';">
+              </div>
+              <div>
+                <div class="bb-card-name">Christhian Cobo</div>
+                <div class="bb-card-meta">Cali · hace 4 meses</div>
+              </div>
+              <div class="bb-card-google">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="bb-test-controls">
+        <button class="bb-test-btn" id="bbTestPrev" aria-label="Anterior">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="bb-test-dots" id="bbTestDots"></div>
+        <button class="bb-test-btn" id="bbTestNext" aria-label="Siguiente">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="bb-test-google-cta">
+      <a href="https://www.google.com/maps/place/Pi%C3%B1atas+y+Regalos+Big+Bang" target="_blank">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Ver todas las reseñas en Google Maps
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function() {
+  var track = document.getElementById('bbTestTrack');
+  var dotsContainer = document.getElementById('bbTestDots');
+  var cards = track ? track.querySelectorAll('.bb-test-card') : [];
+  var total = cards.length;
+  var current = 0;
+  var autoTimer;
+
+  function getPerView() {
+    var w = window.innerWidth;
+    if (w <= 600) return 1;
+    if (w <= 900) return 2;
+    return 3;
+  }
+
+  function maxIndex() {
+    return Math.max(0, total - getPerView());
+  }
+
+  function buildDots() {
+    if (!dotsContainer) return;
+    dotsContainer.innerHTML = '';
+    var count = maxIndex() + 1;
+    for (var i = 0; i < count; i++) {
+      var d = document.createElement('div');
+      d.className = 'bb-test-dot' + (i === current ? ' active' : '');
+      (function(idx) {
+        d.addEventListener('click', function() { goTo(idx); });
+      })(i);
+      dotsContainer.appendChild(d);
+    }
+  }
+
+  function goTo(idx) {
+    current = Math.max(0, Math.min(idx, maxIndex()));
+    var cardWidth = cards[0] ? cards[0].offsetWidth : 0;
+    var gap = 20;
+    var offset = current * (cardWidth + gap);
+    track.style.transform = 'translateX(-' + offset + 'px)';
+    buildDots();
+    resetAuto();
+  }
+
+  function next() { goTo(current >= maxIndex() ? 0 : current + 1); }
+  function prev() { goTo(current <= 0 ? maxIndex() : current - 1); }
+
+  function resetAuto() {
+    clearInterval(autoTimer);
+    autoTimer = setInterval(next, 5000);
+  }
+
+  var btnNext = document.getElementById('bbTestNext');
+  var btnPrev = document.getElementById('bbTestPrev');
+  if (btnNext) btnNext.addEventListener('click', next);
+  if (btnPrev) btnPrev.addEventListener('click', prev);
+
+  window.addEventListener('resize', function() { goTo(0); });
+
+  buildDots();
+  resetAuto();
+})();
+</script>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Moda y accesorios">
+  <rect width="400" height="400" fill="#3D1A6E"/>
+  <path d="M155,150 Q155,110 200,110 Q245,110 245,150" fill="none" stroke="#fff" stroke-width="12"/>
+    <path d="M130,150 L270,150 L255,250 L145,250 Z" fill="#fff"/>
+    <circle cx="200" cy="200" r="10" fill="#3D1A6E"/>
+  <text x="200" y="342" text-anchor="middle" fill="#ffffff"
+        font-family="Nunito, system-ui, sans-serif" font-weight="900"
+        font-size="30" letter-spacing="1">MODA Y ACCESORIOS</text>
+  <text x="200" y="374" text-anchor="middle" fill="#ffffff"
+        font-family="Nunito, system-ui, sans-serif" font-weight="700"
+        font-size="14" letter-spacing="3" opacity="0.7">BIG BANG</text>
+</svg>

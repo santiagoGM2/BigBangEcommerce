@@ -1,0 +1,477 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+.bb-footer-root {
+  font-family: 'Nunito', sans-serif;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  max-width: 100vw;
+  background: #1a1a2e;
+  overflow: hidden;
+}
+
+/* Decorative top wave */
+.bb-footer-wave {
+  display: block;
+  width: 100%;
+  height: 60px;
+  background: #F7F7F7;
+  clip-path: ellipse(55% 100% at 50% 0%);
+}
+
+/* Decorative dots pattern */
+.bb-footer-bg-dots {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: radial-gradient(circle, rgba(233,30,140,0.08) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+
+.bb-footer-main {
+  position: relative;
+  z-index: 1;
+  padding: 64px 48px 0;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Top grid */
+.bb-footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.4fr;
+  gap: 48px;
+  padding-bottom: 52px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+/* Brand column */
+.bb-footer-logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.bb-footer-logo-img {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 2px solid rgba(233,30,140,0.4);
+}
+
+.bb-footer-brand-name {
+  font-size: 18px;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.15;
+  letter-spacing: -0.3px;
+}
+
+.bb-footer-brand-name span {
+  color: #E91E8C;
+}
+
+.bb-footer-tagline {
+  font-size: 13px;
+  color: rgba(255,255,255,0.45);
+  font-weight: 600;
+  line-height: 1.7;
+  margin-bottom: 24px;
+  max-width: 260px;
+}
+
+/* Social icons */
+.bb-footer-socials {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.bb-footer-social-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: all 0.22s;
+  color: rgba(255,255,255,0.6);
+}
+
+.bb-footer-social-btn:hover {
+  background: #E91E8C;
+  border-color: #E91E8C;
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(233,30,140,0.35);
+}
+
+/* WhatsApp CTA pill */
+.bb-footer-wa-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: #25D366;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 11px 20px;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: all 0.22s;
+  font-family: 'Nunito', sans-serif;
+  white-space: nowrap;
+}
+
+.bb-footer-wa-btn:hover {
+  background: #1ebe5d;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(37,211,102,0.35);
+}
+
+/* Column titles */
+.bb-footer-col-title {
+  font-size: 11px;
+  font-weight: 900;
+  color: #E91E8C;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 20px;
+}
+
+/* Links */
+.bb-footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.bb-footer-links a {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.55);
+  text-decoration: none;
+  transition: color 0.18s, padding-left 0.18s;
+  display: block;
+}
+
+.bb-footer-links a:hover {
+  color: #fff;
+  padding-left: 6px;
+}
+
+/* Contact items */
+.bb-footer-contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.bb-footer-contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.bb-footer-contact-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: rgba(233,30,140,0.12);
+  border: 1px solid rgba(233,30,140,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #E91E8C;
+}
+
+.bb-footer-contact-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 3px;
+}
+
+.bb-footer-contact-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.4;
+}
+
+.bb-footer-contact-value a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.18s;
+}
+
+.bb-footer-contact-value a:hover {
+  color: #E91E8C;
+}
+
+/* Horario badge */
+.bb-footer-schedule {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(125,199,32,0.10);
+  border: 1px solid rgba(125,199,32,0.25);
+  border-radius: 8px;
+  padding: 8px 14px;
+  margin-top: 20px;
+}
+
+.bb-footer-schedule-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #7DC720;
+  box-shadow: 0 0 0 3px rgba(125,199,32,0.25);
+  flex-shrink: 0;
+}
+
+.bb-footer-schedule-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: #7DC720;
+  line-height: 1.4;
+}
+
+/* Bottom bar */
+.bb-footer-bottom {
+  padding: 22px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.bb-footer-bottom-left {
+  font-size: 12px;
+  color: rgba(255,255,255,0.25);
+  font-weight: 600;
+}
+
+.bb-footer-bottom-left span {
+  color: rgba(233,30,140,0.7);
+}
+
+.bb-footer-bottom-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.bb-footer-bottom-right a {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.25);
+  text-decoration: none;
+  transition: color 0.18s;
+}
+
+.bb-footer-bottom-right a:hover {
+  color: rgba(255,255,255,0.6);
+}
+
+/* Google Maps mini badge */
+.bb-footer-gmaps {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 8px 14px;
+  text-decoration: none;
+  transition: all 0.22s;
+  margin-top: 12px;
+}
+
+.bb-footer-gmaps:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.15);
+}
+
+.bb-footer-gmaps-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.3;
+}
+
+.bb-footer-gmaps-text strong {
+  color: rgba(255,255,255,0.85);
+  display: block;
+  font-size: 13px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .bb-footer-main { padding: 52px 28px 0; }
+  .bb-footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
+  }
+}
+
+@media (max-width: 600px) {
+  .bb-footer-main { padding: 44px 20px 0; }
+  .bb-footer-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .bb-footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
+</style>
+
+<footer class="bb-footer-root">
+  <div class="bb-footer-wave"></div>
+  <div class="bb-footer-bg-dots"></div>
+
+  <div class="bb-footer-main">
+    <div class="bb-footer-grid">
+
+      <!-- Columna 1: Marca -->
+      <div>
+        <div class="bb-footer-logo-wrap">
+          <img
+            class="bb-footer-logo-img"
+            src="https://i.ibb.co/1tYVtmMx/Whats-App-Image-2026-04-01-at-11-17-31-AM.jpg"
+            alt="Logo Piñatas y Regalos Big Bang"
+          >
+          <div class="bb-footer-brand-name">
+            Piñatas y Regalos<br><span>Big Bang</span>
+          </div>
+        </div>
+        <p class="bb-footer-tagline">
+          Tu tienda favorita de piñatería, juguetería, disfraces y decoración para fiestas en Cali. ¡Todo para que tu celebración sea inolvidable!
+        </p>
+        <div class="bb-footer-socials">
+          <!-- WhatsApp -->
+          <a class="bb-footer-social-btn" href="https://api.whatsapp.com/send?phone=573215581600" target="_blank" aria-label="WhatsApp">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.132.558 4.13 1.535 5.864L.057 23.43a.75.75 0 0 0 .908.97l5.42-1.424A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.959 0-3.799-.5-5.4-1.373l-.387-.217-4.008 1.053 1.07-3.902-.239-.4A9.955 9.955 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+          </a>
+          <!-- Instagram -->
+          <a class="bb-footer-social-btn" href="https://www.instagram.com/tiendas_big_bang/" target="_blank" aria-label="Instagram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <!-- Facebook -->
+          <a class="bb-footer-social-btn" href="https://www.facebook.com/TiendasBigBang/" target="_blank" aria-label="Facebook">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <!-- TikTok -->
+          <a class="bb-footer-social-btn" href="https://www.tiktok.com/@tiendasbigbang" target="_blank" aria-label="TikTok">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.76a4.85 4.85 0 0 1-1.01-.07z"/></svg>
+          </a>
+        </div>
+        <a class="bb-footer-wa-btn" href="https://api.whatsapp.com/send?phone=573215581600" target="_blank">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.132.558 4.13 1.535 5.864L.057 23.43a.75.75 0 0 0 .908.97l5.42-1.424A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.959 0-3.799-.5-5.4-1.373l-.387-.217-4.008 1.053 1.07-3.902-.239-.4A9.955 9.955 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+          Escríbenos al WhatsApp
+        </a>
+      </div>
+
+      <!-- Columna 2: Categorías -->
+      <div>
+        <div class="bb-footer-col-title">Categorías</div>
+        <ul class="bb-footer-links">
+          <li><a href="#">Piñatería y Decoración</a></li>
+          <li><a href="#">Juguetería</a></li>
+          <li><a href="#">Disfraces y Máscaras</a></li>
+          <li><a href="#">Peluches y Regalos</a></li>
+          <li><a href="#">Artículos para Fiestas</a></li>
+          <li><a href="#">Detalles</a></li>
+          <li><a href="#">Compras al por Mayor</a></li>
+        </ul>
+      </div>
+
+      <!-- Columna 3: Información -->
+      <div>
+        <div class="bb-footer-col-title">Información</div>
+        <ul class="bb-footer-links">
+          <li><a href="#">Sobre Nosotros</a></li>
+          <li><a href="#">Cómo Comprar</a></li>
+          <li><a href="#">Envíos y Domicilios</a></li>
+          <li><a href="#">Preguntas Frecuentes</a></li>
+          <li><a href="#">Política de Cambios</a></li>
+          <li><a href="#">Trabaja con Nosotros</a></li>
+        </ul>
+      </div>
+
+      <!-- Columna 4: Contacto y Ubicación -->
+      <div>
+        <div class="bb-footer-col-title">Contacto</div>
+        <div class="bb-footer-contact-list">
+
+          <div class="bb-footer-contact-item">
+            <div class="bb-footer-contact-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.73 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.64 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 5.61 5.61l.77-.77a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16l.92.92z"/></svg>
+            </div>
+            <div>
+              <div class="bb-footer-contact-label">WhatsApp / Teléfono</div>
+              <div class="bb-footer-contact-value">
+                <a href="https://api.whatsapp.com/send?phone=573215581600" target="_blank">+57 321 558 1600</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="bb-footer-contact-item">
+            <div class="bb-footer-contact-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div>
+              <div class="bb-footer-contact-label">Ubicación</div>
+              <div class="bb-footer-contact-value">Cali, Valle del Cauca<br>Colombia</div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="bb-footer-schedule">
+          <div class="bb-footer-schedule-dot"></div>
+          <div class="bb-footer-schedule-text">
+            Lun – Sáb: 9:00 am – 7:00 pm<br>
+            Dom: 10:00 am – 5:00 pm
+          </div>
+        </div>
+
+        <a class="bb-footer-gmaps" href="https://www.google.com/maps/place/Pi%C3%B1atas+y+Regalos+Big+Bang/@3.4294697,-76.5391016,17z/data=!4m8!3m7!1s0x8e30a690b1d36c01:0xcc3c6dabe1908fc1!8m2!3d3.4294643!4d-76.5365267!9m1!1b1!16s%2Fg%2F1pycbw1mw!5m1!1e4?entry=ttu&g_ep=EgoyMDI2MDQwNi4wIKXMDSoASAFQAw%3D%3D" target="_blank">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          <div class="bb-footer-gmaps-text">
+            <strong>Ver en Google Maps</strong>
+            4.5 ★ · +510 reseñas
+          </div>
+        </a>
+
+      </div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="bb-footer-bottom">
+      <div class="bb-footer-bottom-left">
+        © 2026 Piñatas y Regalos Big Bang. Realizado por Grovia en Cali, Colombia.
+      </div>
+      <div class="bb-footer-bottom-right">
+        <a href="#">Términos y condiciones</a>
+        <a href="#">Política de privacidad</a>
+        <a href="#">Libro de reclamaciones</a>
+      </div>
+    </div>
+  </div>
+</footer>

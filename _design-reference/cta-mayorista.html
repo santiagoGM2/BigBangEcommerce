@@ -1,0 +1,388 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,900&display=swap');
+
+.bb-mw { font-family: 'Nunito', sans-serif; background: #F7F7F7; position: relative; left: 50%; transform: translateX(-50%); width: 100vw; max-width: 100vw; overflow: hidden; padding: 80px 48px; }
+.bb-mw * { box-sizing: border-box; margin: 0; padding: 0; }
+.bb-mw-dots { position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(61,26,110,0.06) 1.5px, transparent 1.5px); background-size: 26px 26px; pointer-events: none; }
+.bb-mw-inner { max-width: 1060px; margin: 0 auto; position: relative; z-index: 1; }
+
+.bb-mw-header { text-align: center; margin-bottom: 64px; }
+.bb-mw-pill { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1.5px solid rgba(233,30,140,0.2); color: #E91E8C; font-size: 11px; font-weight: 900; padding: 6px 18px; border-radius: 30px; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 20px; }
+.bb-mw-pill-pulse { width: 8px; height: 8px; border-radius: 50%; background: #E91E8C; animation: bb-pulse 2s infinite; flex-shrink: 0; }
+@keyframes bb-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(233,30,140,0.4); } 50% { box-shadow: 0 0 0 6px rgba(233,30,140,0); } }
+.bb-mw-h1 { font-size: clamp(28px, 4vw, 50px); font-weight: 900; color: #1a1a2e; line-height: 1.05; letter-spacing: -1.5px; margin-bottom: 16px; }
+.bb-mw-h1 .bb-pink { color: #E91E8C; }
+.bb-mw-h1 .bb-purple { color: #3D1A6E; }
+.bb-mw-sub { font-size: 15px; color: #888; font-weight: 600; line-height: 1.7; max-width: 500px; margin: 0 auto; }
+
+.bb-mw-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; align-items: start; }
+
+.bb-calc-card { background: #fff; border-radius: 24px; border: 1.5px solid rgba(61,26,110,0.08); overflow: hidden; }
+.bb-calc-header { background: #1a1a2e; padding: 28px 36px; position: relative; overflow: hidden; }
+.bb-calc-header-deco { position: absolute; right: -24px; top: -24px; width: 120px; height: 120px; border-radius: 50%; background: rgba(233,30,140,0.12); pointer-events: none; }
+.bb-calc-header-deco2 { position: absolute; left: -20px; bottom: -30px; width: 90px; height: 90px; border-radius: 50%; background: rgba(61,26,110,0.3); pointer-events: none; }
+.bb-calc-header-tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(233,30,140,0.15); color: #E91E8C; font-size: 10px; font-weight: 900; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid rgba(233,30,140,0.25); margin-bottom: 14px; position: relative; z-index: 1; }
+.bb-calc-header-title { font-size: clamp(18px, 2.5vw, 24px); font-weight: 900; color: #fff; line-height: 1.2; position: relative; z-index: 1; }
+.bb-calc-header-title span { color: #E91E8C; }
+
+.bb-saving-display { padding: 28px 36px 20px; border-bottom: 1.5px solid rgba(61,26,110,0.06); }
+.bb-saving-label { font-size: 11px; font-weight: 900; color: #bbb; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+.bb-saving-amount { font-size: clamp(36px, 5vw, 56px); font-weight: 900; color: #1a1a2e; line-height: 1; letter-spacing: -2px; }
+.bb-saving-amount .bb-pesos { font-size: 0.55em; font-weight: 700; color: #E91E8C; vertical-align: super; letter-spacing: 0; }
+.bb-saving-amount .bb-num { color: #E91E8C; }
+.bb-saving-per { font-size: 12px; font-weight: 700; color: #aaa; margin-top: 4px; }
+.bb-saving-bar-wrap { height: 6px; background: #F0EEF8; border-radius: 6px; margin-top: 16px; overflow: hidden; }
+.bb-saving-bar-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, #E91E8C, #3D1A6E); transition: width 0.4s cubic-bezier(0.4,0,0.2,1); }
+
+.bb-slider-section { padding: 24px 36px; }
+.bb-slider-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.bb-slider-label { font-size: 13px; font-weight: 800; color: #1a1a2e; }
+.bb-slider-value { font-size: 13px; font-weight: 900; color: #3D1A6E; background: rgba(61,26,110,0.07); padding: 3px 12px; border-radius: 20px; }
+
+input[type=range].bb-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; background: transparent; outline: none; cursor: pointer; }
+input[type=range].bb-slider::-webkit-slider-runnable-track { height: 6px; border-radius: 6px; background: #F0EEF8; }
+input[type=range].bb-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%; background: #E91E8C; border: 3px solid #fff; box-shadow: 0 2px 8px rgba(233,30,140,0.35); margin-top: -9px; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
+input[type=range].bb-slider::-webkit-slider-thumb:hover { transform: scale(1.15); box-shadow: 0 4px 16px rgba(233,30,140,0.45); }
+input[type=range].bb-slider::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: #E91E8C; border: 3px solid #fff; box-shadow: 0 2px 8px rgba(233,30,140,0.35); cursor: pointer; }
+.bb-slider-marks { display: flex; justify-content: space-between; margin-top: 6px; }
+.bb-slider-mark { font-size: 10px; font-weight: 700; color: #ccc; }
+
+.bb-tiers { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; padding: 0 36px 24px; }
+.bb-tier { border-radius: 10px; padding: 10px 8px; text-align: center; border: 1.5px solid transparent; transition: all 0.25s; background: #F7F7F7; cursor: default; }
+.bb-tier.active { background: #fff; border-color: #E91E8C; box-shadow: 0 4px 16px rgba(233,30,140,0.12); }
+.bb-tier-pct { font-size: 20px; font-weight: 900; color: #ccc; transition: color 0.25s; letter-spacing: -0.5px; }
+.bb-tier.active .bb-tier-pct { color: #E91E8C; }
+.bb-tier-label { font-size: 10px; font-weight: 700; color: #bbb; margin-top: 2px; line-height: 1.3; }
+.bb-tier.active .bb-tier-label { color: #888; }
+
+.bb-form-section { padding: 0 36px 28px; border-top: 1.5px solid rgba(61,26,110,0.06); margin-top: 4px; padding-top: 22px; }
+.bb-form-title { font-size: 12px; font-weight: 900; color: #aaa; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; }
+.bb-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.bb-field label { display: block; font-size: 11px; font-weight: 800; color: #888; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.08em; }
+.bb-field input, .bb-field select { width: 100%; height: 42px; border: 1.5px solid rgba(61,26,110,0.12); border-radius: 10px; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700; color: #1a1a2e; background: #fff; padding: 0 14px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; -webkit-appearance: none; appearance: none; }
+.bb-field input:focus, .bb-field select:focus { border-color: #E91E8C; box-shadow: 0 0 0 3px rgba(233,30,140,0.1); }
+.bb-field input::placeholder { color: #ccc; }
+
+.bb-cta-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 16px 24px; background: #25D366; color: #fff; font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 900; border: none; border-radius: 12px; cursor: pointer; transition: all 0.22s; text-decoration: none; }
+.bb-cta-btn:hover { background: #1ebe5d; transform: translateY(-2px); box-shadow: 0 10px 28px rgba(37,211,102,0.3); }
+.bb-cta-btn:active { transform: translateY(0); box-shadow: none; }
+.bb-cta-note { text-align: center; font-size: 11px; color: #ccc; font-weight: 700; margin-top: 10px; }
+
+.bb-right { display: flex; flex-direction: column; gap: 20px; }
+.bb-benefits-card { background: #fff; border-radius: 20px; border: 1.5px solid rgba(61,26,110,0.08); padding: 28px; }
+.bb-benefits-title { font-size: 13px; font-weight: 900; color: #1a1a2e; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+.bb-benefits-badge { background: rgba(61,26,110,0.07); color: #3D1A6E; font-size: 9px; font-weight: 900; padding: 3px 9px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.1em; }
+.bb-benefit-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(61,26,110,0.05); }
+.bb-benefit-item:last-child { border-bottom: none; padding-bottom: 0; }
+.bb-benefit-ico { width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--ibg, rgba(233,30,140,0.08)); color: var(--ic, #E91E8C); }
+.bb-benefit-name { font-size: 13px; font-weight: 800; color: #1a1a2e; margin-bottom: 2px; }
+.bb-benefit-desc { font-size: 12px; font-weight: 600; color: #aaa; line-height: 1.5; }
+
+.bb-steps-card { background: #3D1A6E; border-radius: 20px; padding: 28px; position: relative; overflow: hidden; }
+.bb-steps-deco { position: absolute; right: -30px; bottom: -30px; width: 120px; height: 120px; border-radius: 50%; background: rgba(233,30,140,0.1); pointer-events: none; }
+.bb-steps-title { font-size: 13px; font-weight: 900; color: rgba(255,255,255,0.55); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 20px; position: relative; z-index: 1; }
+.bb-step-item { display: flex; gap: 14px; margin-bottom: 16px; position: relative; z-index: 1; }
+.bb-step-item:last-child { margin-bottom: 0; }
+.bb-step-n { width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; background: rgba(233,30,140,0.2); border: 1px solid rgba(233,30,140,0.3); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; color: #E91E8C; }
+.bb-step-t { font-size: 13px; font-weight: 800; color: #fff; margin-bottom: 2px; }
+.bb-step-d { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.45); line-height: 1.5; }
+
+.bb-proof-card { background: #fff; border-radius: 16px; border: 1.5px solid rgba(61,26,110,0.08); padding: 20px 24px; display: flex; align-items: center; gap: 16px; }
+.bb-proof-avatars { display: flex; }
+.bb-proof-av { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #fff; background: var(--avc, #E91E8C); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; color: #fff; margin-left: -8px; flex-shrink: 0; }
+.bb-proof-av:first-child { margin-left: 0; }
+.bb-proof-main { font-size: 13px; font-weight: 800; color: #1a1a2e; line-height: 1.3; }
+.bb-proof-sub { font-size: 11px; font-weight: 600; color: #aaa; margin-top: 3px; }
+.bb-proof-stars { color: #FFB800; font-size: 12px; letter-spacing: 1px; }
+
+@media (max-width: 860px) {
+  .bb-mw { padding: 56px 20px; }
+  .bb-mw-grid { grid-template-columns: 1fr; }
+  .bb-calc-header, .bb-saving-display, .bb-slider-section, .bb-tiers, .bb-form-section { padding-left: 24px; padding-right: 24px; }
+  .bb-form-row { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .bb-mw { padding: 44px 14px; }
+}
+</style>
+
+<section class="bb-mw">
+  <div class="bb-mw-dots"></div>
+  <div class="bb-mw-inner">
+
+    <div class="bb-mw-header">
+      <div class="bb-mw-pill">
+        <div class="bb-mw-pill-pulse"></div>
+        Canal mayorista
+      </div>
+      <h2 class="bb-mw-h1">Descubre cuánto puedes<br><span class="bb-pink">ahorrar</span> comprando <span class="bb-purple">mayorista</span></h2>
+      <p class="bb-mw-sub">Mueve el slider, ve tu ahorro en tiempo real y escríbenos con un mensaje personalizado. Sin trámites, sin cuotas.</p>
+    </div>
+
+    <div class="bb-mw-grid">
+
+      <div class="bb-calc-card">
+        <div class="bb-calc-header">
+          <div class="bb-calc-header-deco"></div>
+          <div class="bb-calc-header-deco2"></div>
+          <div class="bb-calc-header-tag">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Calculadora de ahorro
+          </div>
+          <div class="bb-calc-header-title">Tu pedido, el precio <span>que mereces</span></div>
+        </div>
+
+        <div class="bb-saving-display">
+          <div class="bb-saving-label">Tu ahorro estimado al mes</div>
+          <div class="bb-saving-amount">
+            <span class="bb-pesos">$</span><span class="bb-num" id="bb-save-num">120.000</span>
+          </div>
+          <div class="bb-saving-per" id="bb-save-per">Comprando $600.000/mes con descuento del 20%</div>
+          <div class="bb-saving-bar-wrap">
+            <div class="bb-saving-bar-fill" id="bb-save-bar" style="width:40%"></div>
+          </div>
+        </div>
+
+        <div class="bb-slider-section">
+          <div class="bb-slider-top">
+            <div class="bb-slider-label">¿Cuánto inviertes al mes en piñatería?</div>
+            <div class="bb-slider-value" id="bb-slider-val">$600.000</div>
+          </div>
+          <input type="range" class="bb-slider" id="bb-slider" min="1" max="10" step="1" value="4">
+          <div class="bb-slider-marks">
+            <span class="bb-slider-mark">$150k</span>
+            <span class="bb-slider-mark">$500k</span>
+            <span class="bb-slider-mark">$1M</span>
+            <span class="bb-slider-mark">$2M</span>
+            <span class="bb-slider-mark">$5M+</span>
+          </div>
+        </div>
+
+        <div class="bb-tiers">
+          <div class="bb-tier" id="bb-tier-1">
+            <div class="bb-tier-pct">15%</div>
+            <div class="bb-tier-label">Pedido básico</div>
+          </div>
+          <div class="bb-tier active" id="bb-tier-2">
+            <div class="bb-tier-pct">25%</div>
+            <div class="bb-tier-label">Pedido medio</div>
+          </div>
+          <div class="bb-tier" id="bb-tier-3">
+            <div class="bb-tier-pct">40%</div>
+            <div class="bb-tier-label">Pedido premium</div>
+          </div>
+        </div>
+
+        <div class="bb-form-section">
+          <div class="bb-form-title">Personaliza tu mensaje — un clic y listo</div>
+          <div class="bb-form-row">
+            <div class="bb-field">
+              <label>Tu nombre</label>
+              <input type="text" id="bb-name" placeholder="Ej: Adriana">
+            </div>
+            <div class="bb-field">
+              <label>Tipo de negocio</label>
+              <select id="bb-type">
+                <option value="revendedora">Revendedora</option>
+                <option value="organizadora de eventos">Org. de eventos</option>
+                <option value="tienda propia">Dueña de tienda</option>
+                <option value="decoradora">Decoradora</option>
+                <option value="otro negocio">Otro</option>
+              </select>
+            </div>
+          </div>
+          <a id="bb-wa-btn" class="bb-cta-btn" href="#" target="_blank">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.132.558 4.13 1.535 5.864L.057 23.43a.75.75 0 0 0 .908.97l5.42-1.424A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.959 0-3.799-.5-5.4-1.373l-.387-.217-4.008 1.053 1.07-3.902-.239-.4A9.955 9.955 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+            <span id="bb-btn-txt">Quiero mi descuento mayorista</span>
+          </a>
+          <div class="bb-cta-note">Respuesta en menos de 2 horas · Lunes a Sábado 9am–7pm</div>
+        </div>
+      </div>
+
+      <div class="bb-right">
+
+        <div class="bb-benefits-card">
+          <div class="bb-benefits-title">
+            Beneficios del programa
+            <span class="bb-benefits-badge">Exclusivo</span>
+          </div>
+          <div class="bb-benefit-item">
+            <div class="bb-benefit-ico" style="--ibg:rgba(233,30,140,0.08);--ic:#E91E8C">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <div>
+              <div class="bb-benefit-name">Hasta 40% de descuento</div>
+              <div class="bb-benefit-desc">Precio escala automáticamente según el volumen de tu pedido</div>
+            </div>
+          </div>
+          <div class="bb-benefit-item">
+            <div class="bb-benefit-ico" style="--ibg:rgba(125,199,32,0.08);--ic:#7DC720">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            </div>
+            <div>
+              <div class="bb-benefit-name">Domicilio prioritario en Cali</div>
+              <div class="bb-benefit-desc">Pedidos mayoristas despachados en 24 horas hábiles</div>
+            </div>
+          </div>
+          <div class="bb-benefit-item">
+            <div class="bb-benefit-ico" style="--ibg:rgba(61,26,110,0.08);--ic:#3D1A6E">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div>
+              <div class="bb-benefit-name">Asesor personal por WhatsApp</div>
+              <div class="bb-benefit-desc">Una persona dedicada a tu cuenta, sin bots</div>
+            </div>
+          </div>
+          <div class="bb-benefit-item">
+            <div class="bb-benefit-ico" style="--ibg:rgba(233,30,140,0.08);--ic:#E91E8C">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            </div>
+            <div>
+              <div class="bb-benefit-name">Catálogo exclusivo mayorista</div>
+              <div class="bb-benefit-desc">Productos y bundles no disponibles al público general</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bb-steps-card">
+          <div class="bb-steps-deco"></div>
+          <div class="bb-steps-title">Así de fácil empieza</div>
+          <div class="bb-step-item">
+            <div class="bb-step-n">1</div>
+            <div>
+              <div class="bb-step-t">Calcula y escribe por WhatsApp</div>
+              <div class="bb-step-d">Con tu nombre y ahorro estimado — el mensaje ya está listo</div>
+            </div>
+          </div>
+          <div class="bb-step-item">
+            <div class="bb-step-n">2</div>
+            <div>
+              <div class="bb-step-t">Recibe tu cotización en horas</div>
+              <div class="bb-step-d">Precios reales, sin sorpresas, para el volumen de tu pedido</div>
+            </div>
+          </div>
+          <div class="bb-step-item">
+            <div class="bb-step-n">3</div>
+            <div>
+              <div class="bb-step-t">Compra y revende con ganancia</div>
+              <div class="bb-step-d">Despachamos en 24h. Tú te quedas con el margen</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bb-proof-card">
+          <div class="bb-proof-avatars">
+            <div class="bb-proof-av" style="--avc:#E91E8C">AP</div>
+            <div class="bb-proof-av" style="--avc:#3D1A6E">JR</div>
+            <div class="bb-proof-av" style="--avc:#7DC720">MG</div>
+            <div class="bb-proof-av" style="--avc:#E91E8C">LS</div>
+            <div class="bb-proof-av" style="--avc:#3D1A6E;font-size:9px">+496</div>
+          </div>
+          <div class="bb-proof-copy">
+            <div class="bb-proof-main">+500 mayoristas activos en el Valle</div>
+            <div class="bb-proof-stars">★★★★★</div>
+            <div class="bb-proof-sub">"Nunca me han fallado en una entrega" — Adriana P.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+(function(){
+  var steps=[
+    {spend:150000,label:'$150.000',pct:15,tier:1},
+    {spend:300000,label:'$300.000',pct:15,tier:1},
+    {spend:500000,label:'$500.000',pct:20,tier:1},
+    {spend:600000,label:'$600.000',pct:20,tier:2},
+    {spend:800000,label:'$800.000',pct:25,tier:2},
+    {spend:1000000,label:'$1.000.000',pct:25,tier:2},
+    {spend:1500000,label:'$1.500.000',pct:30,tier:2},
+    {spend:2000000,label:'$2.000.000',pct:35,tier:3},
+    {spend:3500000,label:'$3.500.000',pct:38,tier:3},
+    {spend:5000000,label:'$5.000.000+',pct:40,tier:3}
+  ];
+
+  function fmt(n){
+    return n.toLocaleString('es-CO').replace(/,/g,'.');
+  }
+
+  var slider=document.getElementById('bb-slider');
+  var sliderVal=document.getElementById('bb-slider-val');
+  var saveNum=document.getElementById('bb-save-num');
+  var savePer=document.getElementById('bb-save-per');
+  var saveBar=document.getElementById('bb-save-bar');
+  var waBtn=document.getElementById('bb-wa-btn');
+  var btnTxt=document.getElementById('bb-btn-txt');
+  var nameInp=document.getElementById('bb-name');
+  var typeInp=document.getElementById('bb-type');
+
+  function getStep(){ return steps[parseInt(slider.value)-1]; }
+
+  function animateNum(el,target){
+    var current=parseInt(el.textContent.replace(/\./g,'').replace(/[^0-9]/g,''))||0;
+    var diff=target-current;
+    var totalSteps=20;
+    var step=0;
+    clearInterval(el._timer);
+    el._timer=setInterval(function(){
+      step++;
+      var val=Math.round(current+(diff*(step/totalSteps)));
+      el.textContent=fmt(val);
+      if(step>=totalSteps){ clearInterval(el._timer); el.textContent=fmt(target); }
+    },16);
+  }
+
+  function updateTiers(tierIdx){
+    [1,2,3].forEach(function(i){
+      var el=document.getElementById('bb-tier-'+i);
+      if(el){ el.classList.toggle('active', i===tierIdx); }
+    });
+  }
+
+  function buildWaUrl(){
+    var s=getStep();
+    var name=nameInp.value.trim()||'';
+    var type=typeInp.value;
+    var saving=Math.round(s.spend*s.pct/100);
+    var msg='Hola, ';
+    if(name){ msg+='soy '+name+' y '; }
+    msg+='soy '+type+'. Usé la calculadora de su página web y calculo que puedo ahorrar $'+fmt(saving)+' al mes comprando mayorista. Quisiera una cotización para un pedido de '+s.label+'.';
+    return 'https://api.whatsapp.com/send?phone=573215581600&text='+encodeURIComponent(msg);
+  }
+
+  function updateBtnText(){
+    var s=getStep();
+    var name=nameInp.value.trim();
+    var saving=fmt(Math.round(s.spend*s.pct/100));
+    if(name){
+      btnTxt.textContent='Escribir como '+name+' — ahorro $'+saving;
+    } else {
+      btnTxt.textContent='Escribir al asesor — ahorro $'+saving+'/mes';
+    }
+  }
+
+  function update(){
+    var s=getStep();
+    var saving=Math.round(s.spend*s.pct/100);
+    var barPct=10+(s.pct/40)*70;
+    sliderVal.textContent=s.label;
+    animateNum(saveNum,saving);
+    savePer.textContent='Comprando '+s.label+'/mes con descuento del '+s.pct+'%';
+    saveBar.style.width=barPct+'%';
+    updateTiers(s.tier);
+    updateBtnText();
+    waBtn.href=buildWaUrl();
+  }
+
+  slider.addEventListener('input', update);
+  nameInp.addEventListener('input', function(){ updateBtnText(); waBtn.href=buildWaUrl(); });
+  typeInp.addEventListener('change', function(){ updateBtnText(); waBtn.href=buildWaUrl(); });
+  waBtn.addEventListener('click', function(){ waBtn.href=buildWaUrl(); });
+
+  update();
+})();
+</script>
