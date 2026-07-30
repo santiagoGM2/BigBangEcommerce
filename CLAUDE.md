@@ -71,6 +71,12 @@ confirmacion validada del lado del servidor.
   memoria del proceso, con **single-flight lock** (para que un pico de trafico
   con cache vacio no dispare N fetches al droplet) y **stale-while-revalidate**
   (nadie espera un refresco).
+- **El state del cache vive en `globalThis`, NO a nivel de modulo.** Si guardas
+  el singleton en un `const` del modulo, Turbopack en dev puede evaluar el
+  archivo mas de una vez (uno para el runtime de instrumentation, otro para
+  RSC) y cada copia tendria su propio state, rompiendo single-flight y
+  disparando fetches duplicados. Con `globalThis` el state es un singleton
+  real por proceso, mismo patron que el cliente de Prisma en Next.
 - **Precalentado en `instrumentation.ts`** para que la primera visita de una
   instancia fria no se coma los ~20s del fetch. En produccion se hace con
   await; en dev se dispara sin await para no bloquear `next dev`.

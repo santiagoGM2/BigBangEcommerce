@@ -62,11 +62,23 @@ interface CacheState {
   refreshing: boolean;
 }
 
-const state: CacheState = {
-  entry: null,
-  inflight: null,
-  refreshing: false,
+// El state vive en globalThis, no a nivel de modulo. Turbopack en dev (y
+// eventualmente HMR o dos grafos de modulos distintos) puede evaluar este
+// archivo mas de una vez; cada evaluacion tendria su propio `state` local y
+// romperia single-flight, disparando fetches duplicados. Con globalThis el
+// state es un singleton real por proceso, igual al patron del cliente de
+// Prisma en Next.
+const globalWithCache = globalThis as unknown as {
+  __catalogoCacheState?: CacheState;
 };
+
+const state: CacheState =
+  globalWithCache.__catalogoCacheState ??
+  (globalWithCache.__catalogoCacheState = {
+    entry: null,
+    inflight: null,
+    refreshing: false,
+  });
 
 /**
  * Devuelve el catalogo completo enriquecido. Es la unica funcion que las
