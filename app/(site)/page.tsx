@@ -10,6 +10,13 @@ import { Testimonios } from "@/components/landing/Testimonios";
 // familia) sale del catalogo en vivo y se cachea segun la politica de
 // lib/catalogo (SWR, 6h). Navbar y Footer vienen del layout del grupo (site).
 // La pagina de diagnostico Fase 1 vive ahora en /debug (no indexable).
+//
+// revalidate 300 (5 min): la seccion "Categorias" chequea con fs.existsSync
+// si /public/categorias/{slug}.png ya se subio. Sin revalidate, ese chequeo
+// solo correria en build, y las fotos nuevas no aparecerian hasta el
+// proximo deploy. Con ISR de 5 min, cualquier foto que suba el cliente se
+// detecta automaticamente en la siguiente revalidacion.
+export const revalidate = 300;
 
 export default async function Home() {
   const [productos, conteo] = await Promise.all([

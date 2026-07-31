@@ -1483,7 +1483,7 @@
 .bb-why-stat-num {
   font-size: 32px;
   font-weight: 900;
-  color: #7dc720;
+  color: #fff;
   letter-spacing: -0.5px;
   line-height: 1;
   margin-bottom: 6px;
@@ -1493,9 +1493,8 @@
 }
 .bb-why-stat-label {
   font-size: 12px;
-  /* Mismo verde que el numero, con opacidad para separar jerarquia sin
-     romper la familia de color (todo el texto de esta barra vive en verde). */
-  color: rgba(125, 199, 32, 0.75);
+  /* Blanco tenue para separar jerarquia sin cambiar de familia. */
+  color: rgba(255, 255, 255, 0.7);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -1765,44 +1764,95 @@
 }
 
 /* ============================================================ */
-/* PULSE del boton "Agregar al carrito"                         */
+/* STEPPER de cantidad (reemplaza el boton cuando cantidad >= 1) */
 /* ============================================================ */
-/* Cada click monta un nuevo <span> con key={pulseId}. La animacion
-   dura 900ms y siempre parte de cero, aunque el click anterior no
-   haya terminado. */
-@keyframes bbCartPulse {
-  0% {
+/* Un solo componente con dos variants: primary (grande, en pagina de
+   producto) y compact (chico, en tarjetas del catalogo). Sincronizado
+   con el carrito global via useCart(). Estructura fija:
+      [ − o basura ] [ cantidad ] [ + ]
+   Cuando cantidad === 1, el boton izquierdo pasa a icono de basura y su
+   click quita completamente del carrito. */
+
+.bb-stepper {
+  display: inline-flex;
+  align-items: stretch;
+  border-radius: 12px;
+  background: #fff;
+  border: 2px solid #e91e8c;
+  overflow: hidden;
+  user-select: none;
+  animation: bbStepperIn 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes bbStepperIn {
+  from {
     opacity: 0;
-    transform: translateX(-50%) translateY(6px) scale(0.7);
+    transform: scale(0.94);
   }
-  25% {
+  to {
     opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-38px) scale(1.1);
+    transform: scale(1);
   }
 }
-.bb-cart-pulse {
-  position: absolute;
-  left: 50%;
+.bb-stepper-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: #e91e8c;
+  border: none;
+  cursor: pointer;
+  transition:
+    background 0.18s,
+    color 0.18s;
+}
+.bb-stepper-btn:hover:not(:disabled) {
+  background: #e91e8c;
   color: #fff;
+}
+.bb-stepper-btn:disabled {
+  color: #d0a5be;
+  cursor: not-allowed;
+}
+.bb-stepper-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #1a1a2e;
   font-weight: 900;
-  pointer-events: none;
-  animation: bbCartPulse 900ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  font-variant-numeric: tabular-nums;
+  border-left: 2px solid rgba(233, 30, 140, 0.15);
+  border-right: 2px solid rgba(233, 30, 140, 0.15);
 }
-.bb-cart-pulse--primary {
-  top: -6px;
-  font-size: 18px;
+
+/* Primary — matching el tamaño del boton grande del producto (56px alto) */
+.bb-stepper--primary {
+  height: 56px;
 }
-.bb-cart-pulse--compact {
-  top: -4px;
-  font-size: 13px;
+.bb-stepper--primary .bb-stepper-btn {
+  width: 56px;
 }
-/* (El "banner AGREGADO" se quito: superponia el texto del boton y el
-   pulse +1 por si solo ya cumple la funcion de senal por-click.) */
+.bb-stepper--primary .bb-stepper-count {
+  min-width: 64px;
+  padding: 0 14px;
+  font-size: 20px;
+}
+
+/* Compact — matching el circulo chico de la tarjeta (36px alto) */
+.bb-stepper--compact {
+  height: 36px;
+  border-radius: 999px;
+  border-width: 1.5px;
+}
+.bb-stepper--compact .bb-stepper-btn {
+  width: 32px;
+}
+.bb-stepper--compact .bb-stepper-count {
+  min-width: 34px;
+  padding: 0 8px;
+  font-size: 14px;
+  border-left-width: 1.5px;
+  border-right-width: 1.5px;
+}
 .bb-card-name {
   font-size: 14px;
   font-weight: 800;
@@ -2362,14 +2412,16 @@
   gap: 20px;
 }
 .bb-footer-bottom-right a {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.25);
+  /* Antes estaba en 0.25 y practicamente no se leia contra el fondo tinta.
+     0.6 lo hace visible sin competir con el copyright de la izquierda. */
+  color: rgba(255, 255, 255, 0.6);
   text-decoration: none;
   transition: color 0.18s;
 }
 .bb-footer-bottom-right a:hover {
-  color: rgba(255, 255, 255, 0.6);
+  color: #fff;
 }
 .bb-footer-gmaps {
   display: inline-flex;
