@@ -51,3 +51,6 @@ Thumbs.db
 
 # supabase
 .supabase
+
+# capturas de auditoria QA (generadas por playwright-skill, no productivo)
+_qa-screenshots

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Nunito } from "next/font/google";
+import { CartProvider } from "@/lib/carrito/CartContext";
 import { LocalBusinessJsonLd } from "@/lib/seo/jsonld";
 import { SITE } from "@/lib/seo/site";
 import "./globals.css";
@@ -32,7 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="es-CO" className={nunito.variable}>
       <body>
         <LocalBusinessJsonLd />
-        {children}
+        <CartProvider>{children}</CartProvider>
       </body>
     </html>
   );

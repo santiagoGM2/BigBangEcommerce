@@ -3,17 +3,16 @@ import { FAMILIAS, FAMILIAS_BY_SLUG } from "@/lib/catalogo/familias-meta";
 import { getConteoPorFamilia, getProductos } from "@/lib/catalogo";
 import { placeholderFamilia } from "@/lib/catalogo/placeholders";
 
-/**
- * Pagina temporal de Fase 1. Sirve solo para verificar que:
- *  - Nunito carga con todos sus pesos (400/600/700/800/900).
- *  - Los tokens de marca funcionan (bg-rosa, text-verde, etc.).
- *  - La capa de catalogo devuelve datos reales del ERP.
- *  - Los 14 placeholders se sirven bien.
- *
- * Se reemplaza por la landing real en Fase 2.
- */
+// Pagina interna de diagnostico (heredada de la Fase 1). Sirve para verificar
+// tokens de marca, pesos de tipografia, la capa de catalogo en vivo y los 14
+// placeholders. No linkeada desde ningun lado en la UI publica.
 
-export default async function Home() {
+export const metadata = {
+  title: "Debug interno",
+  robots: { index: false, follow: false },
+};
+
+export default async function Debug() {
   const [productos, conteo] = await Promise.all([
     getProductos(),
     getConteoPorFamilia(),
@@ -25,10 +24,10 @@ export default async function Home() {
     <main className="mx-auto max-w-5xl px-6 py-12">
       <header className="mb-12">
         <h1 className="text-5xl font-black tracking-tight text-tinta">
-          Tiendas Big Bang · Fase 1
+          Debug interno · Fase 1
         </h1>
         <p className="mt-3 text-lg text-tinta/70">
-          Cimientos listos. Datos reales del ERP en vivo.
+          Cimientos y datos reales del ERP. No indexable.
         </p>
       </header>
 

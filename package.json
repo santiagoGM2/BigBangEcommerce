@@ -12,6 +12,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
+    "test": "tsx --conditions react-server --test lib/**/*.test.ts",
     "gen:familias": "tsx scripts/generate-familias.ts",
     "gen:placeholders": "tsx scripts/generate-placeholders.ts",
     "gen:types": "tsx scripts/generate-supabase-types.ts",

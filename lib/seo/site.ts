@@ -22,7 +22,9 @@ export const SITE = {
     facebook: "https://www.facebook.com/TiendasBigBang/",
     tiktok: "https://www.tiktok.com/@tiendasbigbang",
   },
-  // TODO(cliente): confirmar horario real. Los fragmentos originales traen dos
-  // versiones distintas (Lun-Sab 8am-6pm vs Lun-Sab 9am-7pm + Dom 10am-5pm).
-  horario: null as string | null,
+  // Horario verificado en la ficha oficial de Google del negocio.
+  horario: {
+    lunSab: "8:30 am – 6:30 pm",
+    dom: "9:00 am – 6:30 pm",
+  },
 } as const;
