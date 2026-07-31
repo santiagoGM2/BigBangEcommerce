@@ -7,7 +7,8 @@
     <polygon points="180,170 220,170 210,80" fill="#E91E8C"/>
   <text x="200" y="342" text-anchor="middle" fill="#ffffff"
         font-family="Nunito, system-ui, sans-serif" font-weight="900"
-        font-size="30" letter-spacing="1">COSMÉTICOS Y BELLEZA</text>
+        font-size="30" letter-spacing="1"
+        textLength="360" lengthAdjust="spacingAndGlyphs">COSMÉTICOS Y BELLEZA</text>
   <text x="200" y="374" text-anchor="middle" fill="#ffffff"
         font-family="Nunito, system-ui, sans-serif" font-weight="700"
         font-size="14" letter-spacing="3" opacity="0.7">BIG BANG</text>

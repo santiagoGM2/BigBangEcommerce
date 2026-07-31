@@ -6,7 +6,8 @@
     <polygon points="200,64 208,76 220,80 208,84 200,96 192,84 180,80 192,76" fill="#fff"/>
   <text x="200" y="342" text-anchor="middle" fill="#ffffff"
         font-family="Nunito, system-ui, sans-serif" font-weight="900"
-        font-size="30" letter-spacing="1">NAVIDAD</text>
+        font-size="30" letter-spacing="1"
+        textLength="360" lengthAdjust="spacingAndGlyphs">NAVIDAD</text>
   <text x="200" y="374" text-anchor="middle" fill="#ffffff"
         font-family="Nunito, system-ui, sans-serif" font-weight="700"
         font-size="14" letter-spacing="3" opacity="0.7">BIG BANG</text>

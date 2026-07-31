@@ -1,95 +1,94 @@
+import Image from "next/image";
 import Link from "next/link";
+import type { FamiliaMeta } from "@/lib/catalogo/familias-meta";
+import { FAMILIAS } from "@/lib/catalogo/familias-meta";
 import type { FamiliaSlug } from "@/lib/catalogo/familias-meta";
-import { FAMILIAS_BY_SLUG } from "@/lib/catalogo/familias-meta";
-import { IconChevronRight, IconHeart, IconSmile, IconStar } from "./icons";
-
-// Las 4 familias destacadas en el fragmento original, en su orden visual.
-// Se mapean a slugs reales del catalogo. Los conteos vienen de la capa de
-// catalogo, nunca hardcodeados.
-const DESTACADAS: {
-  slug: FamiliaSlug;
-  bgClass: string;
-  Icon: (props: React.SVGProps<SVGSVGElement>) => React.JSX.Element;
-  subtitle: string;
-}[] = [
-  {
-    slug: "juguetes",
-    bgClass: "juguetes",
-    Icon: IconStar,
-    subtitle: "referencias",
-  },
-  {
-    slug: "pinateria",
-    bgClass: "pinateria",
-    Icon: IconSmile,
-    subtitle: "Piñatas y decoración",
-  },
-  {
-    slug: "peluches",
-    bgClass: "peluches",
-    Icon: IconHeart,
-    subtitle: "Para regalar con amor",
-  },
-  {
-    slug: "decoracion-fiestas",
-    bgClass: "deco",
-    Icon: IconStar,
-    subtitle: "Fiestas y eventos",
-  },
-];
+import { iconoFamilia } from "@/lib/catalogo/placeholders";
+import { fotoCategoriaSiExiste } from "@/lib/catalogo/placeholders.server";
+import { IconChevronRight } from "./icons";
 
 interface CategoriasProps {
   conteo: Map<FamiliaSlug, number>;
 }
 
+/**
+ * Seccion "Categorias" de la landing. Panel interior con degradado sutil
+ * (rosa/verde/morado en glows radiales apenas visibles), cuadricula 2x7 en
+ * desktop que muestra las 14 familias completas. En tablet colapsa a 4 col,
+ * en mobile a 2 col.
+ *
+ * Cada tarjeta usa la foto personalizada en /public/categorias/{slug}.png
+ * si existe; si no, cae automaticamente al SVG icon-only de la familia.
+ * Se decide en server: fotoCategoriaSiExiste() chequea el disco durante SSR.
+ */
 export function Categorias({ conteo }: CategoriasProps) {
   return (
     <div className="bb-cats-root" id="categorias">
-      <div className="bb-cats-header">
-        <div className="bb-cats-label">Categorías</div>
-        <h2 className="bb-cats-title">
-          Encuentra lo que necesitas
-          <br />
-          para <span>celebrar</span>
-        </h2>
-      </div>
+      {/* El fondo exterior gris #F7F7F7 lo pone .bb-cats-root (sin cambios).
+          Adentro va el panel de bordes redondeados con el degradado sutil. */}
+      <div className="bb-cats-panel">
+        <div className="bb-cats-panel-glow" aria-hidden="true" />
 
-      <div className="bb-cats-grid">
-        {DESTACADAS.map((cat) => {
-          const familia = FAMILIAS_BY_SLUG[cat.slug];
-          const n = conteo.get(cat.slug) ?? 0;
-          // "juguetes" muestra "+N referencias", el resto usa el subtitle
-          // literario. Regla del fragmento original: solo la primera tarjeta
-          // llevaba el conteo textual.
-          const bottom =
-            cat.slug === "juguetes"
-              ? `+${n.toLocaleString("es-CO")} ${cat.subtitle}`
-              : cat.subtitle;
-          return (
-            <Link key={cat.slug} href={`/catalogo/${cat.slug}`} className="bb-cat-card">
-              <div className={`bb-cat-bg ${cat.bgClass}`} />
-              <div className="bb-cat-overlay" />
-              <div className="bb-cat-icon-wrap">
-                <cat.Icon width={72} height={72} stroke="#fff" fill="none" strokeWidth="1.2" />
-              </div>
-              <div className="bb-cat-info">
-                <div className="bb-cat-name">{familia.nombre}</div>
-                <div className="bb-cat-count">{bottom}</div>
-              </div>
-              <div className="bb-cat-arrow">
-                <IconChevronRight width={13} height={13} stroke="#fff" />
-              </div>
-            </Link>
-          );
-        })}
-      </div>
+        <div className="bb-cats-header">
+          <div className="bb-cats-label">Categorías</div>
+          <h2 className="bb-cats-title">
+            Encuentra lo que necesitas
+            <br />
+            para <span>celebrar</span>
+          </h2>
+        </div>
 
-      <div className="bb-cats-cta">
-        <Link href="/catalogo">
-          Ver todo el catálogo
-          <IconChevronRight width={15} height={15} />
-        </Link>
+        <ul className="bb-cats-grid-14">
+          {FAMILIAS.map((f) => (
+            <li key={f.slug}>
+              <CategoriaTarjeta familia={f} conteo={conteo.get(f.slug) ?? 0} />
+            </li>
+          ))}
+        </ul>
+
+        <div className="bb-cats-cta">
+          <Link href="/catalogo">
+            Ver todo el catálogo
+            <IconChevronRight width={15} height={15} />
+          </Link>
+        </div>
       </div>
     </div>
+  );
+}
+
+function CategoriaTarjeta({
+  familia,
+  conteo,
+}: {
+  familia: FamiliaMeta;
+  conteo: number;
+}) {
+  // Server-side: decidir aca si mostramos foto real o el icono placeholder.
+  // Cuando el cliente suba una foto a /public/categorias/{slug}.png, esta
+  // rama automaticamente empieza a servir esa imagen sin tocar codigo.
+  const foto = fotoCategoriaSiExiste(familia.slug);
+  const src = foto ?? iconoFamilia(familia.slug);
+
+  return (
+    <Link
+      href={`/catalogo/${familia.slug}`}
+      className="bb-cat14"
+      aria-label={`${familia.nombre}: ${conteo.toLocaleString("es-CO")} productos`}
+    >
+      <div className="bb-cat14-thumb">
+        <Image
+          src={src}
+          alt={familia.nombre}
+          fill
+          sizes="(min-width: 1200px) 130px, (min-width: 820px) 22vw, 44vw"
+          className="bb-cat14-img"
+        />
+      </div>
+      <div className="bb-cat14-name">{familia.nombre}</div>
+      <div className="bb-cat14-count">
+        {conteo.toLocaleString("es-CO")} productos
+      </div>
+    </Link>
   );
 }

@@ -152,21 +152,44 @@ const ICON: Record<FamiliaSlug, string> = {
   `,
 };
 
+// Ancho maximo para el texto del nombre en el SVG. 360 = 400 (viewport) -
+// 40 (margen 20px por lado). textLength + lengthAdjust "spacingAndGlyphs"
+// obliga a que los nombres largos (DECORACION PARA FIESTAS, DISFRACES Y
+// HALLOWEEN, COSMETICOS Y BELLEZA, TECNOLOGIA Y ELECTRONICA) se ajusten
+// horizontalmente sin salirse del cuadro. Sin esto, quedaban recortados.
+const NOMBRE_MAX_WIDTH = 360;
+
 function buildSvg(slug: FamiliaSlug, nombre: string): string {
   const fondo = COLOR[slug];
   const icono = ICON[slug].trim();
-  // El texto se escala automaticamente: en un card de 200px de ancho el
-  // font-size 32 del SVG queda en ~16px de pantalla, suficiente para leer.
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="${escapeAttr(nombre)}">
   <rect width="400" height="400" fill="${fondo}"/>
   ${icono}
   <text x="200" y="342" text-anchor="middle" fill="#ffffff"
         font-family="Nunito, system-ui, sans-serif" font-weight="900"
-        font-size="30" letter-spacing="1">${escapeText(nombre.toUpperCase())}</text>
+        font-size="30" letter-spacing="1"
+        textLength="${NOMBRE_MAX_WIDTH}" lengthAdjust="spacingAndGlyphs">${escapeText(nombre.toUpperCase())}</text>
   <text x="200" y="374" text-anchor="middle" fill="#ffffff"
         font-family="Nunito, system-ui, sans-serif" font-weight="700"
         font-size="14" letter-spacing="3" opacity="0.7">BIG BANG</text>
+</svg>
+`;
+}
+
+/**
+ * Version SIN texto: solo fondo de color + icono blanco centrado. Se usa
+ * en la seccion "Categorias" de la landing, donde el nombre va debajo del
+ * thumb como texto HTML normal (asi no hay que preocuparse por overflow
+ * ni por doble aparicion del nombre).
+ */
+function buildIconOnlySvg(slug: FamiliaSlug, nombre: string): string {
+  const fondo = COLOR[slug];
+  const icono = ICON[slug].trim();
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="${escapeAttr(nombre)}">
+  <rect width="400" height="400" fill="${fondo}"/>
+  ${icono}
 </svg>
 `;
 }
@@ -180,8 +203,13 @@ function escapeAttr(s: string): string {
 
 mkdirSync(OUT_DIR, { recursive: true });
 for (const f of FAMILIAS) {
-  const svg = buildSvg(f.slug, f.nombre);
-  const path = join(OUT_DIR, `${f.slug}.svg`);
-  writeFileSync(path, svg, "utf8");
+  writeFileSync(join(OUT_DIR, `${f.slug}.svg`), buildSvg(f.slug, f.nombre), "utf8");
+  writeFileSync(
+    join(OUT_DIR, `${f.slug}-icon.svg`),
+    buildIconOnlySvg(f.slug, f.nombre),
+    "utf8",
+  );
 }
-console.log(`[generate-placeholders] ${FAMILIAS.length} SVG escritos en ${OUT_DIR}`);
+console.log(
+  `[generate-placeholders] ${FAMILIAS.length * 2} SVG escritos (${FAMILIAS.length} full + ${FAMILIAS.length} icon-only) en ${OUT_DIR}`,
+);

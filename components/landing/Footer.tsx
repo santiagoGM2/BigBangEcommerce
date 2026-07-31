@@ -214,9 +214,10 @@ export function Footer() {
           <div className="bb-footer-bottom-left">
             © {year} {SITE.nombre}. Realizado por Grovia en Cali, Colombia.
           </div>
-          {/* Paginas legales pendientes: mientras no existan, no dejamos
-              anclas "#" muertas. Se anadiran cuando el cliente entregue
-              los textos. */}
+          <div className="bb-footer-bottom-right">
+            <Link href="/legal/terminos">Términos y condiciones</Link>
+            <Link href="/legal/privacidad">Política de privacidad</Link>
+          </div>
         </div>
       </div>
     </footer>

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { IconChevronLeft, IconChevronRight, IconGoogle } from "./icons";
+import { IconChevronLeft, IconChevronRight, IconGoogle, IconLocalGuide } from "./icons";
 
 // Reseñas reales de Google Maps segun el fragmento aprobado. Las fotos de
 // perfil se descargaron desde Google (a 144x144, retina 2x del avatar de
@@ -234,27 +234,41 @@ export function Testimonios() {
                   </div>
                   <p className="bb-card-text">{r.text}</p>
                   <div className="bb-card-footer">
-                    <div
-                      className="bb-card-avatar"
-                      style={
-                        {
-                          ["--avatar-bg" as string]: r.avatarColor,
-                        } as React.CSSProperties
-                      }
-                    >
-                      {r.avatar ? (
-                        // Avatar de 40px, retina 2x -> pedimos 80x80. Las
-                        // fotos en /public/avatars son 144x144, next/image
-                        // las reescala y sirve en AVIF/WebP.
-                        <Image
-                          src={r.avatar}
-                          alt={r.name}
-                          width={80}
-                          height={80}
-                        />
-                      ) : (
-                        r.initials
-                      )}
+                    {/* Wrapper SIN overflow para que el badge Local Guide
+                        pueda sobresalir del circulo. Antes descargabamos
+                        las fotos con el badge naranja *dentro* del PNG
+                        (parametro ba4-br100 de Google) y quedaba recortado
+                        por el border-radius:50%. Ahora las fotos vienen
+                        limpias y el badge se dibuja como capa aparte. */}
+                    <div className="bb-card-avatar-wrap">
+                      <div
+                        className="bb-card-avatar"
+                        style={
+                          {
+                            ["--avatar-bg" as string]: r.avatarColor,
+                          } as React.CSSProperties
+                        }
+                      >
+                        {r.avatar ? (
+                          // Avatar de 40px, retina 2x -> pedimos 80x80.
+                          // Fotos en /public/avatars son 144x144 sin badge.
+                          <Image
+                            src={r.avatar}
+                            alt={r.name}
+                            width={80}
+                            height={80}
+                          />
+                        ) : (
+                          r.initials
+                        )}
+                      </div>
+                      <span
+                        className="bb-card-avatar-badge"
+                        aria-label="Google Local Guide"
+                        title="Reseña verificada · Google Local Guide"
+                      >
+                        <IconLocalGuide width={16} height={16} />
+                      </span>
                     </div>
                     <div>
                       <div className="bb-card-name">{r.name}</div>

@@ -32,15 +32,16 @@ export function BuyNowButton({ idItem, className = "" }: BuyNowButtonProps) {
     });
   }
 
-  // Familia visual: verde (hover verde oscuro). Distinta a la del boton
-  // "Agregar al carrito" (rosa) para que en el detalle del producto se lea
-  // sin dudar cual es cual: verde = "cerrar la compra ya".
+  // Familia visual: morado (base) -> tinta casi negro (hover). El color
+  // base morado es el original acordado; el hover se separo intencionalmente
+  // del hover de "Agregar al carrito" (rosa -> rosa oscuro) para que no
+  // haya colision cromatica entre botones vecinos.
   return (
     <button
       type="button"
       onClick={handleClick}
       disabled={saltando}
-      className={`inline-flex items-center justify-center gap-2 rounded-xl bg-verde px-6 py-4 text-base font-black text-white shadow-md transition hover:-translate-y-0.5 hover:bg-[#5fa018] hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-70 ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-xl bg-morado px-6 py-4 text-base font-black text-white shadow-md transition hover:-translate-y-0.5 hover:bg-tinta hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-70 ${className}`}
     >
       <IconBag width={18} height={18} />
       {saltando ? "Yendo al checkout..." : "Comprar ahora"}

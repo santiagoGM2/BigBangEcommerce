@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Navidad">
+  <rect width="400" height="400" fill="#7DC720"/>
+  <polygon points="200,80 240,150 220,150 260,215 165,215 205,150 160,150" fill="#fff"/>
+    <rect x="188" y="215" width="24" height="26" fill="#fff"/>
+    <polygon points="200,64 208,76 220,80 208,84 200,96 192,84 180,80 192,76" fill="#fff"/>
+</svg>

@@ -197,6 +197,20 @@ export function IconTiktok(props: IconProps) {
   );
 }
 
+export function IconLocalGuide(props: IconProps) {
+  // Circulo naranja con estrella blanca — replica del badge de "Local Guide"
+  // que Google mete en las fotos de perfil de reseñas verificadas.
+  return (
+    <svg viewBox="0 0 24 24" {...props}>
+      <circle cx="12" cy="12" r="12" fill="#F27F0C" />
+      <polygon
+        points="12 5.5 13.9 10.1 18.9 10.5 15.1 13.7 16.3 18.6 12 15.9 7.7 18.6 8.9 13.7 5.1 10.5 10.1 10.1"
+        fill="#fff"
+      />
+    </svg>
+  );
+}
+
 export function IconCart(props: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" {...props}>

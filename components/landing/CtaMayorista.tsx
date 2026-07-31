@@ -1,4 +1,6 @@
 import { IconBag, IconDollar, IconTruck, IconUsers, IconWhatsapp } from "./icons";
+// IconDollar sigue usandose en el beneficio "Precio mayorista automatico";
+// se quito solo del pill "UMBRAL DE COMPRA MAYORISTA" por pedido de UX.
 
 // Modelo real del programa mayorista de Big Bang: es UN UMBRAL FIJO — se
 // supera cierta compra y el pedido entra a precio mayorista. No hay escala
@@ -43,7 +45,6 @@ export function CtaMayorista() {
           {/* Panel principal: umbral + cta */}
           <div className="bb-mw-panel">
             <div className="bb-mw-panel-tag">
-              <IconDollar width={12} height={12} strokeWidth="2.5" />
               Umbral de compra mayorista
             </div>
             <div className="bb-mw-umbral">

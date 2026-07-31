@@ -20,7 +20,12 @@ export function AddToCartButton({
   className = "",
 }: AddToCartButtonProps) {
   const { add } = useCart();
-  const [feedback, setFeedback] = useState(false);
+  // Contador de clicks. Cada click hace pulseId++. Usamos el valor como
+  // key={} en el elemento animado: React lo desmonta+remonta y la animacion
+  // CSS de entrada se reinicia SIEMPRE, aunque el click anterior no haya
+  // terminado de animarse. Sin esto, un usuario que clickea rapido veia
+  // la animacion "trabada" y creia que sus clicks se perdian.
+  const [pulseId, setPulseId] = useState(0);
 
   function handleClick(e: React.MouseEvent) {
     // El boton en las tarjetas del catalogo vive DENTRO de un <Link> al
@@ -28,36 +33,28 @@ export function AddToCartButton({
     e.preventDefault();
     e.stopPropagation();
     add(idItem, 1);
-    setFeedback(true);
-    setTimeout(() => setFeedback(false), 1400);
+    setPulseId((n) => n + 1);
   }
 
   if (variant === "compact") {
-    // Version para las tarjetas del grid: icono + tooltip breve.
     return (
       <button
         type="button"
         onClick={handleClick}
         aria-label="Agregar al carrito"
-        className={`inline-flex h-9 w-9 items-center justify-center rounded-full bg-rosa text-white shadow transition hover:bg-[#c4177a] ${
-          feedback ? "!bg-verde" : ""
-        } ${className}`}
+        className={`relative inline-flex h-9 w-9 items-center justify-center overflow-visible rounded-full bg-rosa text-white shadow transition hover:bg-[#c4177a] ${className}`}
       >
-        {feedback ? (
-          <svg
-            width={16}
-            height={16}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={3}
-            strokeLinecap="round"
-            strokeLinejoin="round"
+        <IconCart width={16} height={16} strokeWidth={2.4} />
+        {pulseId > 0 && (
+          // Cada click monta un nuevo elemento con la anim "pulseUp"; el
+          // key={pulseId} lo garantiza sin importar el timing.
+          <span
+            key={pulseId}
+            className="bb-cart-pulse bb-cart-pulse--compact"
+            aria-hidden="true"
           >
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
-        ) : (
-          <IconCart width={16} height={16} strokeWidth={2.4} />
+            +1
+          </span>
         )}
       </button>
     );
@@ -71,31 +68,18 @@ export function AddToCartButton({
     <button
       type="button"
       onClick={handleClick}
-      className={`inline-flex items-center justify-center gap-2 rounded-xl bg-rosa px-6 py-4 text-base font-black text-white shadow-md transition hover:-translate-y-0.5 hover:bg-[#c4177a] hover:shadow-lg ${
-        feedback ? "!bg-verde" : ""
-      } ${className}`}
+      className={`relative inline-flex items-center justify-center gap-2 overflow-visible rounded-xl bg-rosa px-6 py-4 text-base font-black text-white shadow-md transition hover:-translate-y-0.5 hover:bg-[#c4177a] hover:shadow-lg ${className}`}
     >
-      {feedback ? (
-        <>
-          <svg
-            width={20}
-            height={20}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={3}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
-          Agregado
-        </>
-      ) : (
-        <>
-          <IconCart width={20} height={20} strokeWidth={2.4} />
-          {children ?? "Agregar al carrito"}
-        </>
+      <IconCart width={20} height={20} strokeWidth={2.4} />
+      {children ?? "Agregar al carrito"}
+      {pulseId > 0 && (
+        <span
+          key={`pulse-${pulseId}`}
+          className="bb-cart-pulse bb-cart-pulse--primary"
+          aria-hidden="true"
+        >
+          +1
+        </span>
       )}
     </button>
   );

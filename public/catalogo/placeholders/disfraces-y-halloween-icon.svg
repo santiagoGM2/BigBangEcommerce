@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Disfraces y Halloween">
+  <rect width="400" height="400" fill="#3D1A6E"/>
+  <path d="M120,150 Q120,110 200,110 Q280,110 280,150 Q280,200 240,210 Q220,215 200,195 Q180,215 160,210 Q120,200 120,150 Z" fill="#fff"/>
+    <circle cx="165" cy="160" r="14" fill="#3D1A6E"/>
+    <circle cx="235" cy="160" r="14" fill="#3D1A6E"/>
+</svg>

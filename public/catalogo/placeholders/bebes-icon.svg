@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Bebés">
+  <rect width="400" height="400" fill="#E91E8C"/>
+  <ellipse cx="200" cy="170" rx="50" ry="38" fill="#fff"/>
+    <rect x="180" y="200" width="40" height="20" rx="6" fill="#fff"/>
+    <ellipse cx="200" cy="240" rx="20" ry="16" fill="#fff"/>
+</svg>

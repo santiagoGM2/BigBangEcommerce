@@ -5,11 +5,4 @@
     <path d="M130,170 Q200,120 270,170" fill="none" stroke="#E91E8C" stroke-width="10"/>
     <path d="M130,170 Q200,220 270,170" fill="none" stroke="#E91E8C" stroke-width="10"/>
     <line x1="200" y1="100" x2="200" y2="240" stroke="#E91E8C" stroke-width="10"/>
-  <text x="200" y="342" text-anchor="middle" fill="#ffffff"
-        font-family="Nunito, system-ui, sans-serif" font-weight="900"
-        font-size="30" letter-spacing="1"
-        textLength="360" lengthAdjust="spacingAndGlyphs">JUGUETES</text>
-  <text x="200" y="374" text-anchor="middle" fill="#ffffff"
-        font-family="Nunito, system-ui, sans-serif" font-weight="700"
-        font-size="14" letter-spacing="3" opacity="0.7">BIG BANG</text>
 </svg>

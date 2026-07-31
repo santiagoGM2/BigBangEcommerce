@@ -5,11 +5,4 @@
     <rect x="185" y="195" width="30" height="55" fill="#7DC720"/>
     <rect x="145" y="185" width="26" height="26" fill="#7DC720"/>
     <rect x="230" y="185" width="26" height="26" fill="#7DC720"/>
-  <text x="200" y="342" text-anchor="middle" fill="#ffffff"
-        font-family="Nunito, system-ui, sans-serif" font-weight="900"
-        font-size="30" letter-spacing="1"
-        textLength="360" lengthAdjust="spacingAndGlyphs">HOGAR Y VARIEDADES</text>
-  <text x="200" y="374" text-anchor="middle" fill="#ffffff"
-        font-family="Nunito, system-ui, sans-serif" font-weight="700"
-        font-size="14" letter-spacing="3" opacity="0.7">BIG BANG</text>
 </svg>

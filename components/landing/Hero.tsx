@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { SITE } from "@/lib/seo/site";
 import { IconBag, IconChat, IconShield, IconStore, IconTruck, IconWhatsapp } from "./icons";
@@ -93,7 +94,20 @@ export function Hero({ totalProductos }: HeroProps) {
           </div>
         </div>
 
-        <div className="bb-hero-right" />
+        <div className="bb-hero-right">
+          {/* Imagen del hero (1536x1024, aspect ratio ~1.5). Vive full-fill
+              dentro de la columna derecha; el contenedor tiene position
+              relative y aspect-ratio libre, y la Image usa object-contain
+              para no deformarla. priority porque es above-the-fold. */}
+          <Image
+            src="/herosection.png"
+            alt="Big Bang: piñatas, juguetes y decoración para fiestas en Cali"
+            fill
+            sizes="(min-width: 1440px) 640px, (min-width: 820px) 45vw, 100vw"
+            className="bb-hero-image"
+            priority
+          />
+        </div>
       </div>
 
       <div className="bb-trust">

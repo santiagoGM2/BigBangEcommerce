@@ -6,7 +6,8 @@
     <rect x="256" y="175" width="34" height="60" rx="10" fill="#fff"/>
   <text x="200" y="342" text-anchor="middle" fill="#ffffff"
         font-family="Nunito, system-ui, sans-serif" font-weight="900"
-        font-size="30" letter-spacing="1">TECNOLOGÍA Y ELECTRÓNICA</text>
+        font-size="30" letter-spacing="1"
+        textLength="360" lengthAdjust="spacingAndGlyphs">TECNOLOGÍA Y ELECTRÓNICA</text>
   <text x="200" y="374" text-anchor="middle" fill="#ffffff"
         font-family="Nunito, system-ui, sans-serif" font-weight="700"
         font-size="14" letter-spacing="3" opacity="0.7">BIG BANG</text>
