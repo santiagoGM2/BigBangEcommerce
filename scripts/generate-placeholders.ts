@@ -152,24 +152,35 @@ const ICON: Record<FamiliaSlug, string> = {
   `,
 };
 
-// Ancho maximo para el texto del nombre en el SVG. 360 = 400 (viewport) -
-// 40 (margen 20px por lado). textLength + lengthAdjust "spacingAndGlyphs"
-// obliga a que los nombres largos (DECORACION PARA FIESTAS, DISFRACES Y
-// HALLOWEEN, COSMETICOS Y BELLEZA, TECNOLOGIA Y ELECTRONICA) se ajusten
-// horizontalmente sin salirse del cuadro. Sin esto, quedaban recortados.
+// Ancho maximo para el texto del nombre. 360 = 400 (viewport) - 40 (margen
+// 20px por lado). Solo aplica cuando el nombre naturalmente supera ese
+// ancho; los nombres cortos se dejan renderizar sin compresion para que
+// no queden con las letras artificialmente apretadas.
 const NOMBRE_MAX_WIDTH = 360;
+
+// Umbral en caracteres a partir del cual asumimos que el nombre no cabe
+// naturalmente a font-size 30 con letter-spacing 1. Calibrado midiendo
+// los 14 nombres reales: >14 chars = necesita compresion.
+const NOMBRE_UMBRAL_CHARS = 14;
 
 function buildSvg(slug: FamiliaSlug, nombre: string): string {
   const fondo = COLOR[slug];
   const icono = ICON[slug].trim();
+  const upper = nombre.toUpperCase();
+  // Solo comprimimos los nombres que realmente no caben. Aplicar textLength
+  // parejo a los 14 estiraba/apretaba los cortos (PIÑATERIA, ESCOLAR, BEBES)
+  // sin razon y se veian distorsionados.
+  const necesitaCompresion = upper.length > NOMBRE_UMBRAL_CHARS;
+  const attrsCompresion = necesitaCompresion
+    ? ` textLength="${NOMBRE_MAX_WIDTH}" lengthAdjust="spacingAndGlyphs"`
+    : "";
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="${escapeAttr(nombre)}">
   <rect width="400" height="400" fill="${fondo}"/>
   ${icono}
   <text x="200" y="342" text-anchor="middle" fill="#ffffff"
         font-family="Nunito, system-ui, sans-serif" font-weight="900"
-        font-size="30" letter-spacing="1"
-        textLength="${NOMBRE_MAX_WIDTH}" lengthAdjust="spacingAndGlyphs">${escapeText(nombre.toUpperCase())}</text>
+        font-size="30" letter-spacing="1"${attrsCompresion}>${escapeText(upper)}</text>
   <text x="200" y="374" text-anchor="middle" fill="#ffffff"
         font-family="Nunito, system-ui, sans-serif" font-weight="700"
         font-size="14" letter-spacing="3" opacity="0.7">BIG BANG</text>

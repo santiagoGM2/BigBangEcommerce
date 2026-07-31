@@ -7,8 +7,7 @@
     <path d="M200,118 C170,100 150,60 200,90 C250,60 230,100 200,118 Z" fill="#fff"/>
   <text x="200" y="342" text-anchor="middle" fill="#ffffff"
         font-family="Nunito, system-ui, sans-serif" font-weight="900"
-        font-size="30" letter-spacing="1"
-        textLength="360" lengthAdjust="spacingAndGlyphs">REGALOS Y DETALLES</text>
+        font-size="30" letter-spacing="1" textLength="360" lengthAdjust="spacingAndGlyphs">REGALOS Y DETALLES</text>
   <text x="200" y="374" text-anchor="middle" fill="#ffffff"
         font-family="Nunito, system-ui, sans-serif" font-weight="700"
         font-size="14" letter-spacing="3" opacity="0.7">BIG BANG</text>
