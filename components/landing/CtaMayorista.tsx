@@ -10,9 +10,20 @@ import { IconBag, IconDollar, IconTruck, IconUsers, IconWhatsapp } from "./icons
 // Modelo real del programa: hay UN unico umbral minimo de compra a partir del
 // cual el pedido entra a precio mayorista. El descuento es aproximado porque
 // varia segun las referencias especificas — no es un porcentaje fijo
-// garantizado. Estas dos constantes viven aca en un solo lugar; cuando el
-// cliente confirme los valores reales es cambio de una linea.
+// garantizado.
 //
+// GUARD DE SEGURIDAD: mientras VALORES_MAYORISTA_CONFIRMADOS sea false, la
+// UI muestra una version SIN cifras (solo invitacion a escribir por WhatsApp).
+// Los numeros que estan mas abajo son placeholders realistas para calibrar
+// el diseno, no valores reales del negocio — si se mostraran tal cual un
+// cliente los tomaria como promesa vinculante.
+//
+// Para activar el estimador completo con numeros:
+//   1. Cambiar UMBRAL_MINIMO_MAYORISTA al valor real en pesos colombianos.
+//   2. Cambiar DESCUENTO_APROXIMADO_MAYORISTA a la fraccion real (ej: 0.20).
+//   3. Poner VALORES_MAYORISTA_CONFIRMADOS = true.
+const VALORES_MAYORISTA_CONFIRMADOS = false;
+
 // TODO(cliente): confirmar UMBRAL_MINIMO_MAYORISTA en pesos colombianos.
 // TODO(cliente): confirmar DESCUENTO_APROXIMADO_MAYORISTA (fraccion 0-1;
 // ej: 0.20 para "20% aprox").
@@ -48,6 +59,12 @@ const PCT_LABEL = `${Math.round(DESCUENTO_APROXIMADO_MAYORISTA * 100)}% aprox`;
 // ---------------------------------------------------------------------------
 // Componente
 // ---------------------------------------------------------------------------
+
+// Mensaje generico de WhatsApp (sin cifras). Es el mismo que usa la version
+// simple del panel y la version "estimador vacio" (monto = 0).
+const WA_GENERICO = `https://api.whatsapp.com/send?phone=573215581600&text=${encodeURIComponent(
+  "Hola, quisiera información sobre el programa mayorista de Big Bang y cómo aplicar para comprar a precio mayorista.",
+)}`;
 
 export function CtaMayorista() {
   const [texto, setTexto] = useState("");
@@ -91,20 +108,42 @@ export function CtaMayorista() {
             <div className="bb-mw-pill-pulse" />
             Canal mayorista
           </div>
-          <h2 className="bb-mw-h1">
-            ¿Compras al por mayor?
-            <br />
-            Calcula tu <span className="bb-pink">ahorro estimado</span>
-          </h2>
-          <p className="bb-mw-sub">
-            Superas el umbral mínimo de compra y tu pedido entra a precio
-            mayorista. Escribe cuánto planeas comprar y ve tu ahorro
-            aproximado al instante.
-          </p>
+          {VALORES_MAYORISTA_CONFIRMADOS ? (
+            <>
+              <h2 className="bb-mw-h1">
+                ¿Compras al por mayor?
+                <br />
+                Calcula tu <span className="bb-pink">ahorro estimado</span>
+              </h2>
+              <p className="bb-mw-sub">
+                Superas el umbral mínimo de compra y tu pedido entra a precio
+                mayorista. Escribe cuánto planeas comprar y ve tu ahorro
+                aproximado al instante.
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 className="bb-mw-h1">
+                ¿Compras al por mayor?
+                <br />
+                Accede al <span className="bb-pink">precio mayorista</span>
+              </h2>
+              <p className="bb-mw-sub">
+                Tenemos un programa de precios mayoristas para pedidos grandes.
+                Escríbenos por WhatsApp y un asesor te cuenta las condiciones
+                actualizadas, arma tu cotización y te acompaña en la primera
+                compra.
+              </p>
+            </>
+          )}
         </div>
 
         <div className="bb-mw-grid">
-          {/* Panel principal: estimador interactivo + CTA */}
+          {/* Panel principal — dos variantes:
+                A) Guard = false (default hoy): version simple sin cifras.
+                B) Guard = true (cuando el cliente confirme los valores):
+                   estimador interactivo con input y ahorro calculado. */}
+          {VALORES_MAYORISTA_CONFIRMADOS ? (
           <div className={`bb-mw-panel ${alcanza ? "is-alcanza" : ""}`}>
             <div className="bb-mw-panel-tag">Estimador mayorista</div>
 
@@ -206,6 +245,40 @@ export function CtaMayorista() {
               </div>
             </div>
           </div>
+          ) : (
+            <div className="bb-mw-panel">
+              <div className="bb-mw-panel-tag">Precios mayoristas</div>
+              <h3 className="bb-mw-simple-h3">
+                Programa mayorista para pedidos grandes
+              </h3>
+              <p className="bb-mw-simple-desc">
+                Si tu compra supera cierto monto, el pedido entra
+                automáticamente a precio mayorista. Como el porcentaje
+                exacto depende de las referencias que pidas, preferimos
+                confirmarte las condiciones actualizadas por WhatsApp
+                antes de que armes el pedido.
+              </p>
+              <ul className="bb-mw-simple-list">
+                <li>Sin trámites ni cuotas mensuales.</li>
+                <li>Aplica en tienda y a domicilio en toda Colombia.</li>
+                <li>Un asesor te acompaña en la primera compra.</li>
+              </ul>
+              <div className="bb-mw-cta-box">
+                <a
+                  className="bb-cta-btn"
+                  href={WA_GENERICO}
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <IconWhatsapp width={20} height={20} />
+                  Consultar condiciones por WhatsApp
+                </a>
+                <div className="bb-cta-note">
+                  Respuesta en menos de 2 horas · Lun–Sáb 8:30am–6:30pm
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Beneficios + pasos + prueba social — sin cambios */}
           <div className="bb-right">

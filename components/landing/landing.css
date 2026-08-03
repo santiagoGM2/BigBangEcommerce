@@ -1239,6 +1239,56 @@
   z-index: 1;
 }
 
+/* ---- Version simple del panel (guard = false) — sin cifras ---- */
+.bb-mw-simple-h3 {
+  font-size: clamp(22px, 2.6vw, 30px);
+  font-weight: 900;
+  color: #1a1a2e;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  margin-bottom: 14px;
+  position: relative;
+  z-index: 1;
+}
+.bb-mw-simple-desc {
+  font-size: 14.5px;
+  color: #555;
+  font-weight: 600;
+  line-height: 1.65;
+  margin-bottom: 18px;
+  position: relative;
+  z-index: 1;
+}
+.bb-mw-simple-list {
+  list-style: none;
+  margin: 0 0 22px;
+  padding: 0;
+  position: relative;
+  z-index: 1;
+}
+.bb-mw-simple-list li {
+  position: relative;
+  padding: 8px 0 8px 26px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1a1a2e;
+  line-height: 1.5;
+  border-bottom: 1px solid rgba(61, 26, 110, 0.05);
+}
+.bb-mw-simple-list li:last-child {
+  border-bottom: none;
+}
+.bb-mw-simple-list li::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 15px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e91e8c;
+}
+
 .bb-mw-cta-box {
   border-top: 1.5px solid rgba(61, 26, 110, 0.06);
   padding-top: 22px;
