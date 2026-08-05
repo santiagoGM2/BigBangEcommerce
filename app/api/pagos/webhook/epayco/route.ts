@@ -6,6 +6,7 @@ import {
   getEpaycoConfig,
   mapEpaycoStateToOrderState,
 } from "@/lib/pagos/epayco";
+import { extraerIP, ratelimit } from "@/lib/seguridad/rate-limit";
 import type { Database } from "@/lib/supabase/database.types";
 import { getSupabaseAdmin } from "@/lib/supabase/server";
 
@@ -51,6 +52,20 @@ export const dynamic = "force-dynamic";
 // ---------------------------------------------------------------------------
 
 export async function POST(req: Request) {
+  // Rate limit por IP: 60/min. ePayco reintenta hasta 3 veces cuando no
+  // recibe 200 (segun contrato); un webhook legitimo genera max ~3 hits
+  // por transaccion. 60/min es amplio para picos altos (tanda de pagos
+  // simultanea) y bloquea cualquier flood de un endpoint IP falso que
+  // trate de spamear el webhook (aunque no pase firma, cada hit cuesta
+  // CPU en el md5+lookup Supabase).
+  const ip = extraerIP(req.headers);
+  const rl = ratelimit(ip, { name: "webhook-epayco", max: 60, windowMs: 60_000 });
+  if (!rl.allowed) {
+    // 429 explicito. ePayco lo interpretara como fallo y reintentara,
+    // pero para ese momento el pico atipico ya paso.
+    return NextResponse.json({ ok: false, error: "Too many requests" }, { status: 429 });
+  }
+
   const cfg = getEpaycoConfig();
   if (!cfg) {
     // Sin llaves aun no podemos verificar nada. Respondemos 503 (Service

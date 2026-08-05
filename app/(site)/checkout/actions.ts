@@ -1,8 +1,10 @@
 "use server";
 
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { resolverCarrito } from "@/lib/carrito/resolver";
 import type { CartItem } from "@/lib/carrito/types";
+import { extraerIP, ratelimit } from "@/lib/seguridad/rate-limit";
 import { getSupabaseAdmin } from "@/lib/supabase/server";
 
 // TODO(cliente): definir tabla real de costos de envio (por ciudad? por
@@ -54,6 +56,21 @@ export async function accionCrearPedido(
   itemsRaw: unknown,
   datosRaw: unknown,
 ): Promise<ResultadoCrearPedido | ErrorCrearPedido> {
+  // Rate limit por IP: 5 pedidos por minuto. Un flujo normal de compra
+  // dispara este action UNA vez tras llenar el formulario; 5/min deja
+  // amplio margen para reintentos legitimos (usuario que apreta doble
+  // el boton, error transitorio de red que reintenta) y bloquea abuso
+  // (script creando pedidos falsos).
+  const ip = extraerIP(await headers());
+  const rl = ratelimit(ip, { name: "crear-pedido", max: 5, windowMs: 60_000 });
+  if (!rl.allowed) {
+    console.warn("[pedido] rate limit alcanzado", { ip, retryAt: rl.retryAt });
+    return {
+      ok: false,
+      error: "Demasiados intentos seguidos. Espera un momento e inténtalo de nuevo.",
+    };
+  }
+
   const items = validarItems(itemsRaw);
   if (items.length === 0) {
     return { ok: false, error: "Tu carrito está vacío." };

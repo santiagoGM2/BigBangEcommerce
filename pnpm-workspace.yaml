@@ -2,3 +2,15 @@ allowBuilds:
   esbuild: true
   sharp: true
   unrs-resolver: true
+
+# Fuerza versiones parcheadas de dependencias transitivas con vulnerabilidades
+# conocidas. En pnpm 11+ este bloque vive aca (antes en package.json).
+# Revisar cada 3 meses con `pnpm audit` y limpiar overrides ya no necesarios.
+overrides:
+  sharp: '>=0.35.0'
+  postcss: '>=8.5.23'
+  # brace-expansion tiene 2 lineas vulnerables (1.x y >=4.x); las forzamos
+  # a las respectivas parcheadas. La 5.x nos entra por minimatch de eslint
+  # y sus plugins, la fijamos por path exacto.
+  brace-expansion@1: '>=1.1.18'
+  'minimatch>brace-expansion': '>=5.0.9'

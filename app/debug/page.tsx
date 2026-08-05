@@ -1,11 +1,17 @@
 import Image from "next/image";
+import { notFound } from "next/navigation";
 import { FAMILIAS, FAMILIAS_BY_SLUG } from "@/lib/catalogo/familias-meta";
 import { getConteoPorFamilia, getProductos } from "@/lib/catalogo";
 import { placeholderFamilia } from "@/lib/catalogo/placeholders";
 
-// Pagina interna de diagnostico (heredada de la Fase 1). Sirve para verificar
-// tokens de marca, pesos de tipografia, la capa de catalogo en vivo y los 14
-// placeholders. No linkeada desde ningun lado en la UI publica.
+// Pagina interna de diagnostico. En dev sirve para verificar tokens de marca,
+// pesos de tipografia, la capa de catalogo en vivo y los 14 placeholders.
+//
+// En produccion se sirve 404 aunque este ya la marcaba noindex, expone
+// conteos por familia (informacion competitiva) y un id_item + precio de
+// ejemplo que un scraper podria enumerar. La convencion Next: notFound()
+// aca hace que la ruta simplemente no exista en runtime, no requiere
+// tocar el build ni configurar rewrites.
 
 export const metadata = {
   title: "Debug interno",
@@ -13,6 +19,8 @@ export const metadata = {
 };
 
 export default async function Debug() {
+  if (process.env.NODE_ENV === "production") notFound();
+
   const [productos, conteo] = await Promise.all([
     getProductos(),
     getConteoPorFamilia(),
