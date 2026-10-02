@@ -57,6 +57,15 @@ async function main() {
     source_key: source.source_key, id_item: source.id_item, orden: source.orden,
     source_name: source.source_name, metadata: metadata[index],
   })}`);
+  const parentIds = [...new Set(metadata.flatMap(item => item.parents ?? []))];
+  for (const parentId of parentIds) {
+    const url = new URL(`https://www.googleapis.com/drive/v3/files/${parentId}`);
+    url.searchParams.set("fields", "id,name,parents,trashed,mimeType");
+    url.searchParams.set("supportsAllDrives", "true");
+    const response = await fetcher(url.toString(), { signal: AbortSignal.timeout(30_000) });
+    console.log(`MISSING_PARENT ${JSON.stringify({ id: parentId, status: response.status,
+      metadata: response.ok ? await response.json() : null })}`);
+  }
 }
 
 main().catch((error: unknown) => { console.error(error instanceof Error ? error.message : String(error)); process.exitCode = 1; });
