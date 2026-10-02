@@ -11,6 +11,10 @@ on:
         description: Auditar procedencia de fotos publicadas, sin escrituras
         type: boolean
         default: false
+      inspect_id:
+        description: Buscar un ID de foto en el catalogo y sus referencias (solo lectura)
+        type: string
+        default: ""
   schedule:
     # 03:17 de Bogota (UTC-5); una consulta diaria, sin mover originales.
     - cron: "17 8 * * *"
@@ -54,8 +58,11 @@ jobs:
           PUBLICATION_ENABLED: ${{ vars.DRIVE_PUBLICATION_ENABLED }}
           REQUEST_PUBLICATION: ${{ github.event_name == 'schedule' || inputs.publish }}
           AUDIT_SUBFOLDERS: ${{ inputs.audit_subfolders }}
+          PHOTO_ID_TO_INSPECT: ${{ inputs.inspect_id }}
         run: |
-          if [ "$AUDIT_SUBFOLDERS" = "true" ]; then
+          if [ -n "$PHOTO_ID_TO_INSPECT" ]; then
+            pnpm exec tsx --conditions react-server scripts/inspect-photo-id.ts
+          elif [ "$AUDIT_SUBFOLDERS" = "true" ]; then
             pnpm exec tsx --conditions react-server scripts/audit-drive-subfolder-images.ts
           elif [ "$PUBLICATION_ENABLED" = "true" ] && [ "$REQUEST_PUBLICATION" = "true" ]; then
             pnpm fotos:drive:sync --publish
