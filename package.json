@@ -11,7 +11,7 @@
     "fotos:drive": "tsx --conditions react-server scripts/scan-drive-product-images.ts",
     "fotos:drive:sync": "tsx --conditions react-server scripts/sync-drive-product-images.ts",
     "test:fotos": "tsx --conditions react-server --test scripts/product-images/*.test.ts",
-    "lint:fotos": "eslint --config eslint.fotos.config.mjs scripts/import-product-images.ts scripts/scan-drive-product-images.ts scripts/sync-drive-product-images.ts scripts/product-images eslint.fotos.config.mjs",
+    "lint:fotos": "eslint --config eslint.fotos.config.mjs scripts/import-product-images.ts scripts/scan-drive-product-images.ts scripts/sync-drive-product-images.ts scripts/audit-drive-subfolder-images.ts scripts/product-images eslint.fotos.config.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
