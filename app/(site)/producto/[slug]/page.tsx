@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { getProductoPorId } from "@/lib/catalogo";
@@ -11,6 +10,7 @@ import { SITE } from "@/lib/seo/site";
 import { AddToCartButton } from "@/components/carrito/AddToCartButton";
 import { BuyNowButton } from "@/components/carrito/BuyNowButton";
 import { IconWhatsapp } from "@/components/landing/icons";
+import { ProductGallery } from "@/components/catalogo/ProductGallery";
 
 // NO usamos generateStaticParams: son ~16.000 productos y prerenderizar
 // todo agranda el build de forma innecesaria. Cada URL se sirve bajo demanda
@@ -76,16 +76,7 @@ export default async function ProductoPage({ params }: PageProps) {
       </nav>
 
       <div className="grid gap-8 lg:grid-cols-2">
-        <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-tinta/8 bg-gris">
-          <Image
-            src={foto}
-            alt={producto.descripcion_mostrable}
-            fill
-            sizes="(min-width: 1024px) 500px, 100vw"
-            className="object-cover"
-            priority
-          />
-        </div>
+        <ProductGallery images={producto.images} fallback={foto} description={producto.descripcion_mostrable} />
 
         <div className="flex flex-col gap-5">
           <div>
@@ -173,7 +164,7 @@ export default async function ProductoPage({ params }: PageProps) {
             name: producto.descripcion_mostrable,
             sku: producto.id_item,
             category: familia.nombre,
-            image: producto.foto_url ?? undefined,
+            image: producto.images.length ? producto.images.map(image => image.url) : producto.foto_url ?? undefined,
             offers: {
               "@type": "Offer",
               url: `${SITE.url}/producto/${producto.slug}`,

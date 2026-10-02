@@ -1,0 +1,117 @@
+# Automatizacion de fotografias desde Google Drive
+
+## Estado comprobado — 2026-10-01
+
+Implementados el lector, el publicador y la galeria de producto. Aplicadas las
+migraciones de galeria y seguimiento con la autorizacion posterior para realizar
+la carga. No hay fotos publicadas: las tablas de imagenes, fuentes, intentos y
+bloqueos quedaron vacias despues de las pruebas SQL revertidas.
+
+El endpoint autenticado `GET /producto-ids` ya esta instalado en el Droplet,
+con HTTPS valido y renovacion automatica. DNS apunta a la IP reservada
+137.184.240.13. Consulta DISTINCT ID_ITEM en la misma vista real antes de cada
+lote y nunca devuelve una copia antigua ante fallo del ERP.
+Se verificaron 15.888 identificadores con una peticion HTTPS autenticada.
+El propietario autorizo conectar MariaDB sin TLS; la vista contiene
+25.961 filas y 45 columnas. La lista publica y los impuestos siguen pendientes
+antes de publicar precios en `/productos`; las fotos no dependen de esa regla.
+La excepcion no altera HTTPS ni la validacion de certificados de otros servicios.
+
+## Drive e identidad
+
+Carpeta INVENTARIO: `15Nz_GHOOKbfw04s1abKMjSRzQ8RSlBjt`, compartida desde una
+unidad personal. Se conserva el acceso general por enlace por decision expresa
+del propietario.
+
+Proyecto Google Cloud: `tiendas-big-bang-fotos` (474166276006).
+Cuenta lectora: `bigbang-drive-inventory-reader@tiendas-big-bang-fotos.iam.gserviceaccount.com`.
+Tiene acceso Lector a la carpeta, sin roles del proyecto ni claves permanentes.
+
+Identidad federada limitada al repositorio `santiagoGM2/BigBangEcommerce`, rama
+main y archivo `.github/workflows/fotos-drive-audit.yml`. La lectura con esa
+identidad aun no se ha probado en GitHub: el workflow no se ha publicado.
+Localmente el dry-run de Drive se detiene por ausencia de credenciales ADC;
+no se ha contado ni descargado el inventario de la nube.
+
+## Comandos y activacion
+
+- `pnpm fotos:drive`: escaner de lectura.
+- `pnpm fotos:drive:sync --dry-run`: valida y optimiza sin escribir.
+- `pnpm fotos:drive:sync --publish`: publicacion; exige catalogo disponible antes de cualquier escritura.
+- `pnpm fotos --dry-run`: importador de originales locales.
+
+El workflow se ejecutara a las 03:17 de Bogota una vez al dia. Necesita:
+`CATALOGO_API_KEY`, `NEXT_PUBLIC_SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY`
+como secretos de GitHub. Nunca imprime las claves ni guarda fotos en artefactos.
+
+`DRIVE_AUTOMATION_ENABLED=true` permite ejecuciones programadas.
+`DRIVE_PUBLICATION_ENABLED=true` permite publicar. Sin este segundo interruptor
+se hace dry-run. La ejecucion manual tiene una opcion de publicacion que tambien
+requiere el segundo interruptor. Ninguno se ha activado aun.
+
+## Posiciones y recuperacion
+
+`producto_imagenes` guarda URL y orden; UNIQUE (id_item, orden).
+Los nombres sin ceros se resuelven al ID real solo si la coincidencia es unica:
+14325 pasa a 014325. Se comparan cadenas y un ID exacto tiene prioridad.
+Un alias ambiguo se bloquea. Las asignaciones persistidas no cambian de producto.
+La RPC transaccional mantiene `producto_extra.foto_url` cuando orden=1.
+La galeria del sitio consume estas filas dentro del mismo cache del catalogo.
+
+`producto_imagen_importaciones` conserva el ID de archivo de Drive, producto,
+posicion y version observada/publicada. El mismo archivo mantiene su posicion
+al corregirse. Un archivo distinto con nombre repetido recibe un hueco libre
+desde orden 2. Renombrar un archivo existente a otro producto exige revision.
+
+`producto_imagen_intentos` registra el intento antes de subir. Ruta:
+`drive/ID_ARCHIVO/SHA256/ID_PRODUCTO[-SUFIJO].webp`.
+El nombre final sigue siendo limpio. El hash evita sustituir el objeto anterior
+antes de confirmar la BD y evita cache antigua. La misma version/contenido
+reutiliza ruta y relacion; versiones antiguas se conservan, sin borrado automatico.
+
+Un bloqueo global de dos horas evita solapar importador local y publicador Drive.
+El workflow tiene limite de 45 minutos. Antes de Storage y de confirmar en BD
+se verifica que el bloqueo sigue vigente. Se liberan los bloqueos al terminar.
+
+| Falla | Comportamiento |
+| --- | --- |
+| Catalogo inaccesible | No publica ni declara IDs inexistentes. |
+| Optimizacion | Registra fallo y sigue con otras imagenes. |
+| Storage | No publica la relacion; intento pendiente detectable. |
+| Storage OK / BD falla | URL anterior intacta; nuevo objeto asociado a intento pendiente y reintentable. |
+| Respuesta BD perdida | Reintento idempotente, misma posicion y contenido. |
+| Secundaria falla | Principal y otras fotos confirmadas permanecen. |
+
+Drive queda intacto: no mueve, renombra ni elimina originales.
+El importador local mueve originales solo tras confirmar Storage y BD; si el
+movimiento falla conserva el archivo y su diario para conciliacion.
+
+## Validaciones y siguientes pasos
+
+Inventario local: 216 validas (133 HEIC, 73 PNG, 10 JPEG), cero corruptas.
+Cruce con la vista real: 186 fotos de 106 productos; 30 fotos de 20 IDs
+sin coincidencia en la vista actual. El conteo de Drive aun no se ha obtenido.
+Dry-run nuevo completo con consulta real: 216 optimizadas, 186 listas, 30 sin
+ID en la vista, 18 fotos adicionales preservadas, cero errores de procesamiento,
+Storage o BD, cero problemas de prevalidacion. No publico ni movio originales.
+Para superar la cache DNS antigua se uso temporalmente la IP reservada con
+validacion HTTPS intacta; se retiro la variable al terminar.
+Reporte completo: `product-images-dry-run-20261001.txt`.
+
+41 pruebas de fotos, TypeScript y lint del importador pasan. Cuatro pruebas
+del endpoint de IDs y siete del transformador de precios pasan.
+Pruebas SQL reales,
+revertidas: bloqueo concurrente, posiciones, publicacion sin confirmar rechazada,
+repeticion, correccion, URL principal y permisos privados.
+
+Pendiente: publicar workflow y configurar secretos en GitHub, primera validacion
+real de Drive, carga inicial y activacion diaria. Para mostrar el catalogo completo
+en Vercel quedan las reglas de precios y el despliegue de la galeria.
+No se ha hecho commit; sigue vigente la instruccion anterior de no hacerlo.
+
+Durante la propagacion se puede usar CATALOGO_CONNECT_IP=137.184.240.13 para
+el dry-run local. Solo fija la resolucion de red; conserva SNI y validacion del
+certificado HTTPS. No se configura en GitHub Actions.
+
+El Droplet de USD 4 se dedica al proxy. Conversiones se ejecutan en GitHub Actions;
+los limites/costos de Actions y Supabase son independientes del Droplet.

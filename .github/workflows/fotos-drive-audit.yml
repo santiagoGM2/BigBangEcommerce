@@ -1,0 +1,57 @@
+name: Fotos de productos desde Drive
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publicar fotos validadas (requiere DRIVE_PUBLICATION_ENABLED)
+        type: boolean
+        default: false
+  schedule:
+    # 03:17 de Bogota (UTC-5); una consulta diaria, sin mover originales.
+    - cron: "17 8 * * *"
+
+concurrency:
+  group: fotos-drive-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: github.event_name == 'workflow_dispatch' || vars.DRIVE_AUTOMATION_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      GOOGLE_DRIVE_FOLDER_ID: 15Nz_GHOOKbfw04s1abKMjSRzQ8RSlBjt
+      GOOGLE_CLOUD_PROJECT: tiendas-big-bang-fotos
+      CATALOGO_API_BASE: https://api.tiendasbigbang.com
+      CATALOGO_API_KEY: ${{ secrets.CATALOGO_API_KEY }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.18.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test:fotos
+      - uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: projects/474166276006/locations/global/workloadIdentityPools/big-bang-fotos-github/providers/github-fotos-audit
+          service_account: bigbang-drive-inventory-reader@tiendas-big-bang-fotos.iam.gserviceaccount.com
+      - name: Validar o publicar
+        env:
+          PUBLICATION_ENABLED: ${{ vars.DRIVE_PUBLICATION_ENABLED }}
+          REQUEST_PUBLICATION: ${{ github.event_name == 'schedule' || inputs.publish }}
+        run: |
+          if [ "$PUBLICATION_ENABLED" = "true" ] && [ "$REQUEST_PUBLICATION" = "true" ]; then
+            pnpm fotos:drive:sync --publish
+          else
+            pnpm fotos:drive:sync --dry-run
+          fi

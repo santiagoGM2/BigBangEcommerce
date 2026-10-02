@@ -5,7 +5,7 @@ import { FAMILIAS_BY_SLUG, type FamiliaSlug } from "./familias-meta";
 import { capitalizarDescripcion } from "./formato";
 import { fetchProductosDelProxy } from "./proxy";
 import { slugify } from "./slug";
-import { fetchProductoExtras } from "./supabase";
+import { fetchProductoExtras, type ProductoExtra } from "./supabase";
 import type { ProductoEnriquecido, ProductoProxy } from "./types";
 
 // ============================================================================
@@ -230,7 +230,7 @@ async function construirCacheEntry(): Promise<CacheEntry> {
 
 function enriquecer(
   raw: ProductoProxy,
-  extras: Map<string, { foto_url: string | null; visible: boolean }>,
+  extras: Map<string, ProductoExtra>,
   categoriasNoMapeadas: Map<string, number>,
 ): ProductoEnriquecido | null {
   // Filtro 1: categoria marcada OCULTAR en el CSV (no negociable).
@@ -272,7 +272,8 @@ function enriquecer(
   return {
     ...raw,
     familia: mapa.familia,
-    foto_url: extra?.foto_url ?? null,
+    foto_url: extra?.images[0]?.url ?? extra?.foto_url ?? null,
+    images: extra?.images ?? [],
     slug: slugify(raw.descripcion, raw.id_item),
     descripcion_mostrable: capitalizarDescripcion(raw.descripcion),
     requiere_confirmacion: mapa.requiereConfirmacion ?? false,

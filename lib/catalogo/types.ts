@@ -1,5 +1,10 @@
 import type { FamiliaSlug } from "./familias-meta";
 
+export interface ProductImage {
+  url: string;
+  order: number;
+}
+
 /**
  * Producto crudo devuelto por el proxy del catalogo.
  * El proxy devuelve EXACTAMENTE estos 9 campos, no hay mas.
@@ -46,6 +51,7 @@ export interface ProductoEnriquecido extends ProductoProxy {
   familia: FamiliaSlug;
   /** URL de la foto en Supabase Storage, o null si aun no hay foto. */
   foto_url: string | null;
+  images: ProductImage[];
   /** Slug canonico para la URL de detalle. */
   slug: string;
   /** Descripcion formateada para mostrar (capitalizada). */

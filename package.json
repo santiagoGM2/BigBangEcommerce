@@ -7,6 +7,11 @@
     "node": ">=20.9.0"
   },
   "scripts": {
+    "fotos": "tsx --conditions react-server scripts/import-product-images.ts",
+    "fotos:drive": "tsx --conditions react-server scripts/scan-drive-product-images.ts",
+    "fotos:drive:sync": "tsx --conditions react-server scripts/sync-drive-product-images.ts",
+    "test:fotos": "tsx --conditions react-server --test scripts/product-images/*.test.ts",
+    "lint:fotos": "eslint --config eslint.fotos.config.mjs scripts/import-product-images.ts scripts/scan-drive-product-images.ts scripts/sync-drive-product-images.ts scripts/product-images eslint.fotos.config.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -16,7 +21,8 @@
     "gen:familias": "tsx scripts/generate-familias.ts",
     "gen:placeholders": "tsx scripts/generate-placeholders.ts",
     "gen:types": "tsx scripts/generate-supabase-types.ts",
-    "smoke:catalogo": "tsx --conditions react-server scripts/smoke-catalogo.ts"
+    "smoke:catalogo": "tsx --conditions react-server scripts/smoke-catalogo.ts",
+    "probe:erp": "tsx scripts/probe-erp-view.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.111.0",
@@ -29,6 +35,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@eslint/compat": "^2.1.1",
     "@eslint/eslintrc": "^3.3.6",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^22.10.0",
@@ -37,7 +44,11 @@
     "dotenv": "^17.4.2",
     "eslint": "^10.8.0",
     "eslint-config-next": "^16.2.12",
+    "google-auth-library": "11.1.0",
+    "libheif-js": "1.23.2",
+    "mariadb": "^3.5.4",
     "server-only": "^0.0.1",
+    "sharp": "0.35.3",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.19.6",
     "typescript": "^5.9.3"
