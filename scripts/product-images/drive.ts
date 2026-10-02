@@ -53,18 +53,20 @@ async function request(fetcher: DriveFetch, url: URL): Promise<Response> {
   throw new Error("Drive API no respondio correctamente.");
 }
 
-export async function listDriveImages(fetcher: DriveFetch, rootId: string): Promise<DriveFile[]> {
+export async function listDriveImages(fetcher: DriveFetch, rootId: string, options: { includeSubfolders?: boolean } = {}): Promise<DriveFile[]> {
   const id = driveFolderId(rootId);
   const metadataUrl = new URL(`${API_BASE}/files/${id}`);
-  metadataUrl.searchParams.set("fields", "id,name,mimeType,driveId");
+  metadataUrl.searchParams.set("fields", "id,name,mimeType,driveId,trashed");
   metadataUrl.searchParams.set("supportsAllDrives", "true");
-  const root = await (await request(fetcher, metadataUrl)).json() as { id?: string; mimeType?: string };
-  if (root.id !== id || root.mimeType !== "application/vnd.google-apps.folder") {
+  const root = await (await request(fetcher, metadataUrl)).json() as { id?: string; mimeType?: string; trashed?: boolean };
+  if (root.id !== id || root.trashed || root.mimeType !== "application/vnd.google-apps.folder") {
     throw new Error("La carpeta de Drive no existe o no es accesible para esta cuenta.");
   }
   const folders = [{ id, path: "" }];
   const visited = new Set<string>();
   const files: DriveFile[] = [];
+  const seenFiles = new Set<string>();
+  const seenTokens = new Set<string>();
   while (folders.length) {
     const folder = folders.shift()!;
     if (visited.has(folder.id)) continue;
@@ -88,12 +90,20 @@ export async function listDriveImages(fetcher: DriveFetch, rootId: string): Prom
         if (!/^[A-Za-z0-9_-]+$/.test(file.id) || !file.name || !file.mimeType) throw new Error("Drive devolvio metadatos incompletos o un ID invalido.");
         const relativePath = `${folder.path}${file.name}`;
         if (file.mimeType === "application/vnd.google-apps.folder") {
-          folders.push({ id: file.id, path: `${relativePath}/` });
+          // La publicación diaria solo lee la raíz; la auditoría puede inspeccionar subcarpetas.
+          if (options.includeSubfolders) folders.push({ id: file.id, path: `${relativePath}/` });
+          continue;
         } else {
+          if (seenFiles.has(file.id)) throw new Error("Drive repitio un archivo entre paginas; se cancela la conciliacion.");
+          seenFiles.add(file.id);
           files.push({ ...file, relativePath });
         }
       }
       pageToken = result.nextPageToken;
+      if (pageToken) {
+        if (seenTokens.has(pageToken)) throw new Error("Drive repitio un token de paginacion.");
+        seenTokens.add(pageToken);
+      }
     } while (pageToken);
   }
   return files.sort((a, b) => a.relativePath < b.relativePath ? -1 : a.relativePath > b.relativePath ? 1 : a.id < b.id ? -1 : a.id > b.id ? 1 : 0);

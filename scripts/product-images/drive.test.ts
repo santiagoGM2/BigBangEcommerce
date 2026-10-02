@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { downloadDriveImage, driveFolderId, listDriveImages } from "./drive";
 
-test("Drive lista paginas y subcarpetas sin perder archivos con el mismo nombre", async () => {
+test("Drive pagina la raiz, conserva nombres repetidos e ignora subcarpetas", async () => {
   const calls: URL[] = [];
   const fetcher = async (input: string) => {
     const url = new URL(input);
@@ -27,11 +27,30 @@ test("Drive lista paginas y subcarpetas sin perder archivos con el mismo nombre"
   };
   const files = await listDriveImages(fetcher, "https://drive.google.com/drive/u/1/folders/folder123456");
   assert.deepEqual(files.map(file => [file.id, file.relativePath]), [
-    ["a", "14325.png"], ["b", "14325.png"], ["c", "secundarias/14325-1.jpg"],
+    ["a", "14325.png"], ["b", "14325.png"],
   ]);
-  assert.equal(calls.length, 4);
+  assert.equal(calls.length, 3);
   assert.ok(calls.every(url => url.searchParams.get("supportsAllDrives") === "true"));
   assert.ok(calls.filter(url => url.pathname.endsWith("/files")).every(url => url.searchParams.get("includeItemsFromAllDrives") === "true"));
+});
+
+test("La auditoria optativa identifica fotos publicadas en subcarpetas", async () => {
+  const fetcher = async (input: string) => {
+    const url = new URL(input);
+    if (url.pathname.endsWith("/files/folder123456")) return Response.json({ id: "folder123456", mimeType: "application/vnd.google-apps.folder" });
+    if (url.searchParams.get("q") === "'folder123456' in parents and trashed = false") return Response.json({ files: [
+      { id: "sub", name: "otra", mimeType: "application/vnd.google-apps.folder" },
+      { id: "root-photo", name: "000480.jpg", mimeType: "image/jpeg" },
+    ] });
+    if (url.searchParams.get("q") === "'sub' in parents and trashed = false") return Response.json({ files: [
+      { id: "nested-photo", name: "000481.jpg", mimeType: "image/jpeg" },
+    ] });
+    throw new Error(`Solicitud inesperada: ${url}`);
+  };
+  const files = await listDriveImages(fetcher, "folder123456", { includeSubfolders: true });
+  assert.deepEqual(files.map(file => [file.id, file.relativePath]), [
+    ["root-photo", "000480.jpg"], ["nested-photo", "otra/000481.jpg"],
+  ]);
 });
 
 test("Drive rechaza listados incompletos y carpetas inaccesibles", async () => {
