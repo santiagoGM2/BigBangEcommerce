@@ -11,6 +11,10 @@ on:
         description: Auditar procedencia de fotos publicadas, sin escrituras
         type: boolean
         default: false
+      cleanup_trashed_subfolder_objects:
+        description: Limpieza puntual de 32 objetos ya desvinculados
+        type: boolean
+        default: false
   schedule:
     # 03:17 de Bogota (UTC-5); una consulta diaria, sin mover originales.
     - cron: "17 8 * * *"
@@ -54,8 +58,11 @@ jobs:
           PUBLICATION_ENABLED: ${{ vars.DRIVE_PUBLICATION_ENABLED }}
           REQUEST_PUBLICATION: ${{ github.event_name == 'schedule' || inputs.publish }}
           AUDIT_SUBFOLDERS: ${{ inputs.audit_subfolders }}
+          CLEANUP_TRASHED_SUBFOLDER_OBJECTS: ${{ inputs.cleanup_trashed_subfolder_objects }}
         run: |
-          if [ "$AUDIT_SUBFOLDERS" = "true" ]; then
+          if [ "$CLEANUP_TRASHED_SUBFOLDER_OBJECTS" = "true" ]; then
+            pnpm exec tsx scripts/one-time-remove-trashed-subfolder-objects.ts
+          elif [ "$AUDIT_SUBFOLDERS" = "true" ]; then
             pnpm exec tsx --conditions react-server scripts/audit-drive-subfolder-images.ts
           elif [ "$PUBLICATION_ENABLED" = "true" ] && [ "$REQUEST_PUBLICATION" = "true" ]; then
             pnpm fotos:drive:sync --publish
