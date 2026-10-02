@@ -2,7 +2,7 @@ import "server-only";
 import { createHash } from "node:crypto";
 import { resolve } from "node:path";
 import { tmpdir } from "node:os";
-import { mkdtemp, writeFile, readFile, rm } from "node:fs/promises";
+import { mkdtemp, writeFile, readFile, rm, appendFile } from "node:fs/promises";
 import { config } from "dotenv";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { fetchPhotoCatalogIds } from "./product-images/catalog";
@@ -183,7 +183,22 @@ async function main() {
     }
     for (const row of plan) console.log(`[${unchanged.has(row.file) ? "sin cambios" : row.status}] ${JSON.stringify(row.file)}${row.image ? ` ID=${row.image.idItem}, orden=${row.image.order}` : ""}${row.detail ? `: ${row.detail}` : ""}`);
     console.log("Los originales de Drive permanecen intactos.");
-    if (!ids || plan.some(row => !["ready", "success"].includes(row.status))) process.exitCode = 1;
+    const reviewCount = plan.filter(row => row.status === "unknownId").length;
+    if (process.env.GITHUB_STEP_SUMMARY) {
+      await appendFile(process.env.GITHUB_STEP_SUMMARY, [
+        `## Fotos de Drive: ${dryRun ? "validacion sin escrituras" : "publicacion"}`,
+        `- Archivos encontrados: ${files.length}`,
+        `- Optimizados: ${outputs.size}`,
+        `- Publicados: ${plan.filter(row => row.status === "success").length}`,
+        `- Ya publicados, sin cambios: ${unchanged.size}`,
+        `- Fotos con ID sin coincidencia en la vista: ${reviewCount}`,
+        "- Originales de Drive intactos; detalle por archivo en el registro de esta ejecucion.", "",
+      ].join("\n"));
+    }
+    // En publicacion, los IDs ausentes son omisiones explicitas para revision;
+    // no impiden la siguiente tanda. Los fallos reales siguen dando codigo 1.
+    const acceptable = dryRun ? ["ready", "success"] : ["ready", "success", "unknownId"];
+    if (!ids || plan.some(row => !acceptable.includes(row.status))) process.exitCode = 1;
   } finally {
     try { await lease?.release(); }
     finally { if (temporary) await rm(temporary, { recursive: true, force: true }); }
