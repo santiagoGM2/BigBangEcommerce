@@ -100,7 +100,11 @@ export async function getProductosDeFamilia(
   familia: FamiliaSlug,
 ): Promise<ProductoEnriquecido[]> {
   const productos = await getProductos();
-  return productos.filter((p) => p.familia === familia);
+  // Ordena la familia completa antes de paginar. El orden estable conserva
+  // el orden previo dentro de cada grupo y no modifica el catalogo cacheado.
+  return productos
+    .filter((p) => p.familia === familia)
+    .sort((a, b) => Number(Boolean(b.foto_url)) - Number(Boolean(a.foto_url)));
 }
 
 /**

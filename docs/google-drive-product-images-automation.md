@@ -1,5 +1,15 @@
 # Automatizacion de fotografias desde Google Drive
 
+## Actualizacion — 2026-10-02
+
+El fallo de despliegue descrito en el historial inferior fue corregido con
+6419e03. La web publica muestra las 318 fotos en 156 productos y las 14 familias
+responden correctamente. La ejecucion programada de hoy (37022265761) leyo
+372 archivos: 318 sin cambios, 53 sin ID en la vista y un JPEG corrupto.
+El scheduler ejecuto esa revision a las 09:46 de Bogota, despues del horario
+programado; no se promete puntualidad exacta. Instrucciones operativas actuales:
+[Guia para el equipo](drive-instructions-for-team.md).
+
 ## Estado comprobado — 2026-10-01
 
 ### Carga real y automatizacion activada
