@@ -58,13 +58,20 @@ async function main() {
     source_name: source.source_name, metadata: metadata[index],
   })}`);
   const parentIds = [...new Set(metadata.flatMap(item => item.parents ?? []))];
-  for (const parentId of parentIds) {
+  const visitedParents = new Set<string>();
+  while (parentIds.length) {
+    const parentId = parentIds.shift()!;
+    if (visitedParents.has(parentId) || parentId === folderId) continue;
+    visitedParents.add(parentId);
+    if (visitedParents.size > 50) throw new Error("Demasiadas carpetas ancestrales para auditar.");
     const url = new URL(`https://www.googleapis.com/drive/v3/files/${parentId}`);
     url.searchParams.set("fields", "id,name,parents,trashed,mimeType");
     url.searchParams.set("supportsAllDrives", "true");
     const response = await fetcher(url.toString(), { signal: AbortSignal.timeout(30_000) });
+    const parent = response.ok ? await response.json() as { id?: string; name?: string; parents?: string[]; trashed?: boolean } : null;
     console.log(`MISSING_PARENT ${JSON.stringify({ id: parentId, status: response.status,
-      metadata: response.ok ? await response.json() : null })}`);
+      metadata: parent })}`);
+    for (const ancestor of parent?.parents ?? []) parentIds.push(ancestor);
   }
 }
 
