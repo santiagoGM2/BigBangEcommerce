@@ -11,6 +11,10 @@ on:
         description: Auditar procedencia de fotos publicadas, sin escrituras
         type: boolean
         default: false
+      cleanup_identified_subfolder:
+        description: Retirar de Storage el objeto ya desvinculado de la subcarpeta auditada
+        type: boolean
+        default: false
   schedule:
     # 03:17 de Bogota (UTC-5); una consulta diaria, sin mover originales.
     - cron: "17 8 * * *"
@@ -54,8 +58,11 @@ jobs:
           PUBLICATION_ENABLED: ${{ vars.DRIVE_PUBLICATION_ENABLED }}
           REQUEST_PUBLICATION: ${{ github.event_name == 'schedule' || inputs.publish }}
           AUDIT_SUBFOLDERS: ${{ inputs.audit_subfolders }}
+          CLEANUP_IDENTIFIED_SUBFOLDER: ${{ inputs.cleanup_identified_subfolder }}
         run: |
-          if [ "$AUDIT_SUBFOLDERS" = "true" ]; then
+          if [ "$CLEANUP_IDENTIFIED_SUBFOLDER" = "true" ]; then
+            pnpm exec tsx scripts/one-time-remove-subfolder-object.ts
+          elif [ "$AUDIT_SUBFOLDERS" = "true" ]; then
             pnpm exec tsx --conditions react-server scripts/audit-drive-subfolder-images.ts
           elif [ "$PUBLICATION_ENABLED" = "true" ] && [ "$REQUEST_PUBLICATION" = "true" ]; then
             pnpm fotos:drive:sync --publish
