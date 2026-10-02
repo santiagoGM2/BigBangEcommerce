@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import pymysql
+from public_catalog import CatalogCache
 
 
 def read_ids(cfg):
@@ -33,7 +34,7 @@ def read_ids(cfg):
         connection.close()
 
 
-def make_handler(cfg, loader=read_ids):
+def make_handler(cfg, loader=read_ids, catalog=None):
     lock = threading.Lock()
 
     class Handler(BaseHTTPRequestHandler):
@@ -49,6 +50,26 @@ def make_handler(cfg, loader=read_ids):
         def do_GET(self):
             if not hmac.compare_digest(self.headers.get('x-api-key', ''), cfg['apiKey']):
                 self.respond(401, {'error': 'unauthorized'})
+                return
+            if self.path == '/status' and catalog is not None:
+                self.respond(200, catalog.status())
+                return
+            if self.path == '/productos' and catalog is not None:
+                snapshot = catalog.snapshot
+                if snapshot is None:
+                    self.respond(503, {'error': 'catalog_warming'})
+                    return
+                compressed = 'gzip' in self.headers.get('Accept-Encoding', '')
+                data = snapshot[1] if compressed else snapshot[0]
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json; charset=utf-8')
+                self.send_header('Content-Length', str(len(data)))
+                self.send_header('Cache-Control', 'no-store')
+                self.send_header('Vary', 'Accept-Encoding')
+                if compressed:
+                    self.send_header('Content-Encoding', 'gzip')
+                self.end_headers()
+                self.wfile.write(data)
                 return
             if self.path != '/producto-ids':
                 self.respond(503 if self.path == '/productos' else 404,
@@ -66,6 +87,16 @@ def make_handler(cfg, loader=read_ids):
             finally:
                 lock.release()
 
+        def do_POST(self):
+            if not hmac.compare_digest(self.headers.get('x-api-key', ''), cfg['apiKey']):
+                self.respond(401, {'error': 'unauthorized'})
+                return
+            if self.path != '/refrescar' or catalog is None:
+                self.respond(404, {'error': 'not_found'})
+                return
+            threading.Thread(target=catalog.refresh, daemon=True).start()
+            self.respond(202, {'refresh_requested': True})
+
         def log_message(self, fmt, *args):
             # No registra headers, credenciales ni datos del ERP.
             pass
@@ -78,4 +109,7 @@ if __name__ == '__main__':
         config = json.load(handle)
     if not isinstance(config.get('apiKey'), str) or len(config['apiKey']) < 24:
         raise ValueError('API key missing or too short')
-    ThreadingHTTPServer(('127.0.0.1', 8080), make_handler(config)).serve_forever()
+    catalog = CatalogCache(config) if config.get('pricePolicy') else None
+    if catalog:
+        catalog.start()
+    ThreadingHTTPServer(('127.0.0.1', 8080), make_handler(config, catalog=catalog)).serve_forever()

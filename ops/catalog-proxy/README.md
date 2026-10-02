@@ -1,7 +1,12 @@
 # Transformacion del catalogo del ERP
 
 `catalog.py` implementa el contrato de nueve campos del sitio con los nombres
-comprobados en la vista real. No es todavia el servidor HTTP del proxy.
+comprobados en la vista real. `public_catalog.py` mantiene su cache atomico.
+
+Actualizacion 2026-10-01: Santiago autorizo publicar precios asumiendo IVA
+incluido. Se configuro provisionalmente 001 como publica y 002 como respaldo,
+con PRECIO_MIN_1. La confirmacion comercial de Oscar sigue pendiente.
+El registro 026529, sin descripcion, se omite con warning; los demas no se bloquean.
 
 - ID_ITEM sigue siendo string, con ceros iniciales.
 - Categoria usa DESCRIPCION_LINEA2.
@@ -10,8 +15,8 @@ comprobados en la vista real. No es todavia el servidor HTTP del proxy.
 - Listas publica/respaldo e impuestos deben confirmarse expresamente.
 - No se eligen filas duplicadas al azar ni se publican precios cero/inventados.
 
-La politica 001/002 con impuestos incluidos aparece solo en datos de prueba.
-No constituye confirmacion comercial ni esta habilitada en produccion.
+La politica 001/002 con impuestos incluidos esta habilitada provisionalmente
+por indicacion del usuario; no constituye confirmacion comercial de Oscar.
 Si los precios son netos, hace falta confirmar la formula de impuestos antes
 de implementar ese modo, incluido consumo cuando corresponda.
 
@@ -22,8 +27,11 @@ Se ejecutaron 7/7 correctamente en el Droplet el 2026-10-01.
 
 `image_ids_server.py` sirve `/producto-ids` con la misma API key privada.
 Consulta la vista real en una transaccion de solo lectura antes de cada lote.
-Nunca publica datos antiguos si falla el ERP. `/productos` responde 503 hasta
-confirmar la politica comercial, sin inventar precios.
+Nunca publica IDs antiguos si falla el ERP. `/productos` entrega el catalogo
+completo en memoria, gzip y refresco cada seis horas. Un refresco fallido
+conserva el ultimo catalogo valido y reintenta en un minuto. `/status` informa
+antiguedad y fallos; `POST /refrescar` solicita un refresco. Todos requieren
+x-api-key. Sin politica configurada, `/productos` sigue respondiendo 503.
 
 Instalado como `bigbang-image-ids.service`, solo en 127.0.0.1:8080, detras de
 nginx con HTTPS en api.tiendasbigbang.com. Configuracion privada en

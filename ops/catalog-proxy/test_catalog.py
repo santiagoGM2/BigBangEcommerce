@@ -39,6 +39,12 @@ class CatalogTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             transform_catalog([row(product_id=2)], self.policy)
 
+    def test_empty_description_does_not_block_other_products(self):
+        invalid = row(product_id='026529')
+        invalid['DESCRIPCION'] = ''
+        products = transform_catalog([row(), invalid], self.policy)
+        self.assertEqual([item['id_item'] for item in products], ['000002'])
+
     def test_invalid_prices_are_not_published_as_zero(self):
         for amount in ['0', '-1', 'NaN', 'Infinity', '12.50', None, 123.5]:
             with self.assertRaises(ValueError):

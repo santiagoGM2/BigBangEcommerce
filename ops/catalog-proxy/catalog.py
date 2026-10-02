@@ -2,6 +2,7 @@
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 import re
+import logging
 
 
 @dataclass(frozen=True)
@@ -73,6 +74,9 @@ def transform_catalog(rows, policy):
     for product_id, group in sorted(groups.items()):
         is_public = policy.public_list in group
         row = group[policy.public_list if is_public else policy.fallback_list]
+        if not text(row, 'DESCRIPCION', allow_empty=True):
+            logging.warning('Catalog omitted product %s: empty description', product_id)
+            continue
         state = text(row, 'ESTADO_LITERAL')
         if state not in ['ACTIVO', 'INACTIVO']:
             raise ValueError('Unrecognized ERP state')
