@@ -2,6 +2,40 @@
 
 ## Estado comprobado — 2026-10-01
 
+### Carga real y automatizacion activada
+
+Con autorizacion expresa posterior se publicaron los cambios de fotos en main,
+excluyendo los cambios de pagos y el commit local previo de skeletons/CSP.
+Los secretos privados de GitHub estan configurados y ambos interruptores
+DRIVE_AUTOMATION_ENABLED y DRIVE_PUBLICATION_ENABLED estan en true.
+Revision diaria: 03:17 de Bogota, sujeta a la ejecucion del scheduler de GitHub.
+
+Drive real: 372 archivos, 318 imagenes publicadas para 156 productos,
+53 archivos correspondientes a 35 IDs sin coincidencia en la vista, y un
+JPEG corrupto (28502-6.jpg). Los originales permanecen intactos.
+
+Primera carga: 317 publicadas, una subida de Storage fallo y quedo en el diario.
+Reintento: 317 omitidas sin cambios, una recuperada. Resultado SQL: 318 objetos,
+318 relaciones, cero relaciones duplicadas, cero intentos pendientes, cero
+bloqueos y cero discrepancias entre principal orden 1 y producto_extra.foto_url.
+El job sigue indicando fallo por el JPEG corrupto; no se oculta ese error.
+Una tercera ejecucion de la misma tanda omitio las 318 fotos: cero nuevas
+subidas. Las 318 URLs publicas devolvieron WEBP valido, sin errores.
+Resultado final detallado: drive-upload-verification-20261001.md.
+
+- [Validacion inicial](https://github.com/santiagoGM2/BigBangEcommerce/actions/runs/36951950850).
+- [Carga inicial](https://github.com/santiagoGM2/BigBangEcommerce/actions/runs/36952418441).
+- [Recuperacion e idempotencia](https://github.com/santiagoGM2/BigBangEcommerce/actions/runs/36952819533).
+- Detalle: drive-inventory-validation-20261001.txt y drive-images-manual-review-20261001.md.
+
+Vercel: compilacion y TypeScript correctos; el deploy falla al generar
+/producto/sitemap/[__metadata_id__] porque /productos responde 503 mientras
+se confirma lista de precios e impuestos. La galeria esta publicada en codigo,
+pero aun no desplegada correctamente. No se afirma que las fotos ya se vean
+en la web publica. La automatizacion de fotos funciona independientemente.
+
+Las siguientes secciones conservan el historial previo a la carga.
+
 Implementados el lector, el publicador y la galeria de producto. Aplicadas las
 migraciones de galeria y seguimiento con la autorizacion posterior para realizar
 la carga. No hay fotos publicadas: las tablas de imagenes, fuentes, intentos y

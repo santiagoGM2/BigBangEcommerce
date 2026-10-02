@@ -1,5 +1,22 @@
 # Auditoria de fotos
 
+## Carga real completada y reintento comprobado — 2026-10-01
+
+Drive contiene 372 archivos. Se publicaron 318 fotos para 156 productos.
+53 archivos (35 IDs) no aparecen en la vista real; 28502-6.jpg falla por datos
+JPEG corruptos. Reporte manual: drive-images-manual-review-20261001.md.
+
+La primera carga publico 317 y dejo un intento pendiente por Storage.
+La segunda omitio esas 317, publico la pendiente y concilio su intento.
+Comprobacion SQL posterior: 318 objetos, 318 relaciones, cero duplicados,
+cero intentos pendientes, cero bloqueos, cero principales inconsistentes.
+Queda activa la automatizacion diaria; los originales de Drive no se modificaron.
+El job conserva resultado fallido por el JPEG corrupto y sigue con las demas fotos.
+
+Vercel compila y pasa TypeScript, pero el sitemap bloquea el despliegue por
+/productos HTTP 503. Confirmacion comercial de precios sigue pendiente.
+Las secciones inferiores son historial anterior, no el estado final.
+
 ## Estado mas reciente — servidor y cruce habilitados, 2026-10-01
 
 Instalado `/producto-ids` con autenticacion y consulta fresca de la vista real,
