@@ -1,5 +1,31 @@
 # Automatizacion de fotografias desde Google Drive
 
+## Actualizacion — 2026-10-05
+
+Las ejecuciones programadas de los dias 3, 4 y 5 llegaron al catalogo y a Drive.
+El JPEG `28502-6.jpg` mantuvo el error `bad Huffman code` y hacia fallar el lote
+completo aunque las 318 fotos validas ya estuvieran publicadas. El dia 3 se
+publico correctamente una version nueva y se omitieron 317 sin cambios.
+
+La publicacion ahora distingue contenido rechazado de fallos operativos:
+
+- `invalidImage`: rechazo inequivoco del decodificador; no se sube ni se marca
+  como publicada. Junto a los IDs sin coincidencia, se muestra como incidencia
+  pendiente del archivo y no hace fallar por si sola la publicacion diaria.
+- Red, checksum, disco, errores inesperados de procesamiento, Storage, BD,
+  bloqueo y operaciones sin conciliar siguen produciendo salida 1.
+- El dry-run sigue siendo estricto: un archivo pendiente impide declarar un
+  lote completamente limpio.
+- Cada publicacion guarda el resumen y el detalle en Markdown y JSON como
+  artefacto `reporte-fotos-drive-<run_id>` durante 30 dias, ademas de mostrar una
+  advertencia visible en GitHub. No se silencia ningun error con `continue-on-error`.
+- Al reemplazar una foto rechazada por una copia sana se vuelve a evaluar en
+  la siguiente ejecucion; no hay exclusiones permanentes por nombre.
+
+El horario sigue programado a las 03:17 de Bogota, sujeto a retrasos del
+scheduler de GitHub. El 5 de octubre comenzo a las 12:12 de Bogota.
+Las secciones siguientes conservan el historial y sus resultados originales.
+
 ## Actualizacion — 2026-10-02
 
 El fallo de despliegue descrito en el historial inferior fue corregido con

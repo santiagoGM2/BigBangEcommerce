@@ -57,6 +57,7 @@ supabase/.temp/
 # Originales y reportes locales de importacion de fotos
 /_fotos-productos-pendientes/
 /.erp-audit/
+/.drive-photo-reports/
 
 # Credenciales temporales de Google Actions y caches Python
 gha-creds-*.json

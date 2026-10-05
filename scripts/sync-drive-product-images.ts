@@ -2,7 +2,7 @@ import "server-only";
 import { createHash } from "node:crypto";
 import { resolve } from "node:path";
 import { tmpdir } from "node:os";
-import { mkdtemp, writeFile, readFile, rm, appendFile } from "node:fs/promises";
+import { mkdir, mkdtemp, writeFile, readFile, rm, appendFile } from "node:fs/promises";
 import { config } from "dotenv";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { fetchPhotoCatalogIds } from "./product-images/catalog";
@@ -12,6 +12,8 @@ import { createDriveFetch, downloadDriveImage, driveFolderId, listDriveImages } 
 import { publishDriveImage, type DriveAttempt, type DriveSource } from "./product-images/drive-publisher";
 import { acquireRemoteImportLease } from "./product-images/lease";
 import { adminFetch } from "./product-images/remote";
+import { InvalidImageContentError } from "./product-images/image-validation";
+import { buildDriveRunReport, renderDriveRunSummary, type DriveRunReport } from "./product-images/drive-report";
 
 config({ path: resolve(process.cwd(), ".env.local"), quiet: true });
 const required = (name: string) => {
@@ -31,6 +33,12 @@ async function readRows<T>(admin: SupabaseClient, table: string, orders: string[
   }
 }
 const single = <T,>(value: T | T[]): T => Array.isArray(value) ? value[0]! : value;
+function redact(message: string): string {
+  for (const secret of [process.env.CATALOGO_API_KEY, process.env.SUPABASE_SERVICE_ROLE_KEY]) {
+    if (secret) message = message.replaceAll(secret, "[REDACTADO]");
+  }
+  return message;
+}
 
 async function main() {
   const args = process.argv.slice(2);
@@ -56,6 +64,7 @@ async function main() {
   const maxBytes = bucket.file_size_limit ? Number(bucket.file_size_limit) : Infinity;
   const lease = dryRun ? undefined : await acquireRemoteImportLease(admin);
   let temporary: string | undefined;
+  let report: DriveRunReport;
   try {
     temporary = await mkdtemp(resolve(tmpdir(), "bigbang-drive-images-"));
     const [sources, occupied] = await Promise.all([
@@ -105,7 +114,10 @@ async function main() {
         const output = resolve(temporary!, `${file.id}.webp`);
         await writeFile(output, result.data);
         outputs.set(row.file, output);
-      } catch (error) { row.status = "processingError"; row.detail = errorMessage(error); }
+      } catch (error) {
+        row.status = error instanceof InvalidImageContentError ? "invalidImage" : "processingError";
+        row.detail = redact(errorMessage(error));
+      }
     });
     const ready = candidates.filter((file, index) => plan[index]!.status === "ready" && outputs.has(keyFor(file)));
     if (!dryRun && ready.length) {
@@ -164,7 +176,7 @@ async function main() {
           row.status = "success";
         } catch (error) {
           row.status = errorMessage(error).startsWith("Storage:") ? "storageError" : "databaseError";
-          row.detail = errorMessage(error);
+          row.detail = redact(errorMessage(error));
           const { error: journalError } = bytes ? await admin.from("producto_imagen_intentos")
             .update({ last_error: row.detail.slice(0, 1000), updated_at: new Date().toISOString() })
             .eq("source_key", file.id).eq("source_version", file.version!)
@@ -178,37 +190,39 @@ async function main() {
     console.log(`IDs validados: ${ids ? new Set(plan.filter(row => row.image && ids!.has(row.image.idItem)).map(row => row.image!.idItem)).size : 0}`);
     console.log(`IDs sin coincidencia unica en la vista actual: ${ids ? new Set(plan.filter(row => row.status === "unknownId").map(row => row.image!.idItem)).size : 0}`);
     const attempts = await readRows<DriveAttempt>(admin, "producto_imagen_intentos", ["source_key", "source_version", "sha256"]);
-    for (const attempt of attempts.filter(attempt => !attempt.completed_at)) {
+    const pendingAttempts = attempts.filter(attempt => !attempt.completed_at);
+    for (const attempt of pendingAttempts) {
       console.log(`[INTENTO PENDIENTE] ${attempt.source_key}: ${attempt.storage_path}. Puede contener un objeto sin relacion; se conserva para conciliacion.`);
     }
     for (const row of plan) console.log(`[${unchanged.has(row.file) ? "sin cambios" : row.status}] ${JSON.stringify(row.file)}${row.image ? ` ID=${row.image.idItem}, orden=${row.image.order}` : ""}${row.detail ? `: ${row.detail}` : ""}`);
     console.log("Los originales de Drive permanecen intactos.");
-    const reviewCount = plan.filter(row => row.status === "unknownId").length;
-    if (process.env.GITHUB_STEP_SUMMARY) {
-      await appendFile(process.env.GITHUB_STEP_SUMMARY, [
-        `## Fotos de Drive: ${dryRun ? "validacion sin escrituras" : "publicacion"}`,
-        `- Archivos encontrados: ${files.length}`,
-        `- Optimizados: ${outputs.size}`,
-        `- Publicados: ${plan.filter(row => row.status === "success").length}`,
-        `- Ya publicados, sin cambios: ${unchanged.size}`,
-        `- Fotos con ID sin coincidencia en la vista: ${reviewCount}`,
-        "- Originales de Drive intactos; detalle por archivo en el registro de esta ejecucion.", "",
-      ].join("\n"));
-    }
-    // En publicacion, los IDs ausentes son omisiones explicitas para revision;
-    // no impiden la siguiente tanda. Los fallos reales siguen dando codigo 1.
-    const acceptable = dryRun ? ["ready", "success"] : ["ready", "success", "unknownId"];
-    if (!ids || plan.some(row => !acceptable.includes(row.status))) process.exitCode = 1;
+    report = buildDriveRunReport({ dryRun, catalogAvailable: ids !== null,
+      found: files.length, ignored: files.length - candidates.length, optimized: outputs.size,
+      unchanged: unchanged.size, pendingAttempts: pendingAttempts.length, rows: plan });
   } finally {
     try { await lease?.release(); }
     finally { if (temporary) await rm(temporary, { recursive: true, force: true }); }
   }
+  // Se cierra el informe después de liberar el bloqueo y limpiar temporales:
+  // un fallo de finalización no puede dejar un informe que afirme éxito.
+  const summary = renderDriveRunSummary(report);
+  if (process.env.PHOTO_REPORT_DIRECTORY) {
+    const directory = resolve(process.env.PHOTO_REPORT_DIRECTORY);
+    await mkdir(directory, { recursive: true });
+    await writeFile(resolve(directory, "reporte-fotos.json"), JSON.stringify(report, null, 2) + "\n");
+    await writeFile(resolve(directory, "reporte-fotos.md"), summary);
+  }
+  if (process.env.GITHUB_STEP_SUMMARY) await appendFile(process.env.GITHUB_STEP_SUMMARY, summary);
+  if (report.counts.unknownIdFiles || report.counts.invalidImages) {
+    const notice = `${report.counts.unknownIdFiles} fotos sin ID en la vista y ${report.counts.invalidImages} imagenes rechazadas. Revisar el resumen y el reporte descargable; no se publicaron esos archivos.`;
+    console.log(`${process.env.GITHUB_ACTIONS === "true" ? "::warning::" : "[REVISION] "}${notice}`);
+  }
+  // Rechazos de contenido se reportan por archivo. La validación estricta y
+  // cualquier fallo operativo conservan salida 1; no hay continue-on-error.
+  console.log(`Resultado del lote: ${report.outcome}`);
+  process.exitCode = report.exitCode;
 }
 
 main().catch((error: unknown) => {
-  let message = errorMessage(error);
-  for (const secret of [process.env.CATALOGO_API_KEY,process.env.SUPABASE_SERVICE_ROLE_KEY]) {
-    if (secret) message = message.replaceAll(secret, "[REDACTADO]");
-  }
-  console.error(`[FATAL] ${message}`); process.exitCode = 1;
+  console.error(`[FATAL] ${redact(errorMessage(error))}`); process.exitCode = 1;
 });

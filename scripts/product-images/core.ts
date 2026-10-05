@@ -3,13 +3,14 @@ import { resolve, relative, isAbsolute, dirname, extname } from "node:path";
 import { randomUUID } from "node:crypto";
 import sharp from "sharp";
 import { optimizeHeic } from "./heic";
+import { classifyImageDecodeError, InvalidImageContentError } from "./image-validation";
 
 export type ImageName = { idItem: string; order: number; storagePath: string };
 export type Outcome = {
   file: string;
   status: "ready" | "success" | "invalidExtension" | "invalidName" | "duplicate" |
     "unknownId" | "catalogUnavailable" | "processingError" | "storageError" |
-    "databaseError" | "moveError" | "blocked" | "unsupportedFormat" | "unknownFormat" | "journalError";
+    "databaseError" | "moveError" | "blocked" | "unsupportedFormat" | "unknownFormat" | "journalError" | "invalidImage";
   format?: string;
   reassigned?: boolean;
   detail?: string;
@@ -155,13 +156,17 @@ export async function optimizeImage(path: string) {
 
 export async function optimizeImageBytes(source: Buffer) {
   if (detectImageFormat(source.subarray(0, 64)) === "heic") return optimizeHeic(source);
-  const metadata = await sharp(source, { failOn: "warning" }).metadata();
-  if (!["jpeg", "png", "webp"].includes(metadata.format ?? "")) throw new Error("Contenido no permitido aunque la extension sea valida.");
-  if ((metadata.pages ?? 1) > 1) throw new Error("Imagen animada o multipagina: requiere revision manual.");
-  const output = await sharp(source, { failOn: "warning" }).rotate()
-    .resize({ width: 1200, height: 1200, fit: "inside", withoutEnlargement: true })
-    .webp({ quality: 80 }).toBuffer({ resolveWithObject: true });
-  return { ...output, sourceFormat: metadata.format };
+  try {
+    const metadata = await sharp(source, { failOn: "warning" }).metadata();
+    if (!["jpeg", "png", "webp"].includes(metadata.format ?? "")) throw new InvalidImageContentError("Contenido no permitido aunque la extension sea valida.");
+    if ((metadata.pages ?? 1) > 1) throw new InvalidImageContentError("Imagen animada o multipagina: requiere revision manual.");
+    const output = await sharp(source, { failOn: "warning" }).rotate()
+      .resize({ width: 1200, height: 1200, fit: "inside", withoutEnlargement: true })
+      .webp({ quality: 80 }).toBuffer({ resolveWithObject: true });
+    return { ...output, sourceFormat: metadata.format };
+  } catch (error) {
+    throw classifyImageDecodeError(error);
+  }
 }
 
 function inside(root: string, path: string) {

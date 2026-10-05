@@ -59,6 +59,7 @@ jobs:
           REQUEST_PUBLICATION: ${{ github.event_name == 'schedule' || inputs.publish }}
           AUDIT_SUBFOLDERS: ${{ inputs.audit_subfolders }}
           PHOTO_ID_TO_INSPECT: ${{ inputs.inspect_id }}
+          PHOTO_REPORT_DIRECTORY: .drive-photo-reports
         run: |
           if [ -n "$PHOTO_ID_TO_INSPECT" ]; then
             pnpm exec tsx --conditions react-server scripts/inspect-photo-id.ts
@@ -69,3 +70,12 @@ jobs:
           else
             pnpm fotos:drive:sync --dry-run
           fi
+      - name: Guardar reporte de fotos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reporte-fotos-drive-${{ github.run_id }}
+          path: .drive-photo-reports/
+          include-hidden-files: true
+          if-no-files-found: ignore
+          retention-days: 30
