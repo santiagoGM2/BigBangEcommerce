@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import { EpaycoCheckoutButton } from "@/components/carrito/EpaycoCheckoutButton";
 import { LimpiarCarritoAlMontar } from "@/components/carrito/LimpiarCarritoAlMontar";
 import { formatearPrecio } from "@/lib/catalogo/formato";
 import { getEpaycoWidgetConfig } from "@/lib/pagos/epayco";
 import { SITE } from "@/lib/seo/site";
 import { getSupabaseAdmin } from "@/lib/supabase/server";
+import { getOrderAccessSecret, loadAuthorizedOrder, orderAccessCookieName } from "@/lib/seguridad/order-access";
 
 export const metadata: Metadata = {
   title: "Pedido creado",
@@ -23,29 +25,31 @@ export const dynamic = "force-dynamic";
 
 export default async function ConfirmacionPage({ searchParams }: PageProps) {
   const { pedido: numero } = await searchParams;
-  if (!numero) notFound();
-
-  // Trae la cabecera en una sola consulta (incluye id UUID para el JOIN
-  // de items). El numero es pseudo-secreto (BB-YYYY-NNNNN, atomico y no
-  // enumerable), asi que el link es la "credencial" para ver el pedido.
-  const admin = getSupabaseAdmin();
-  const { data: ped, error: pedErr } = await admin
+  if (!numero || !/^BB-\d{4}-\d{5,12}$/.test(numero)) notFound();
+  const token = (await cookies()).get(orderAccessCookieName(numero))?.value;
+  if (!token) notFound();
+  // Autorizar antes de usar service role: adivinar el número no permite
+  // distinguir pedidos existentes ni consultar su información personal.
+  const result = await loadAuthorizedOrder(numero, token, getOrderAccessSecret(), async () => getSupabaseAdmin()
     .from("pedido")
     .select(
       "id,numero,estado,subtotal,costo_envio,total,created_at,pagado_at,pasarela,metodo_pago,referencia_pago,comprador_nombre,comprador_email,comprador_telefono,comprador_documento,envio_ciudad,envio_departamento,envio_direccion",
     )
     .eq("numero", numero)
-    .maybeSingle();
+    .maybeSingle());
+  if (!result) notFound();
+  const { data: ped, error: pedErr } = result;
   if (pedErr) {
     console.error("[confirmacion] consulta pedido fallo:", pedErr);
     throw new Error("No pudimos consultar el pedido.");
   }
   if (!ped) notFound();
 
-  const { data: items } = await admin
+  const { data: items, error: itemsError } = await getSupabaseAdmin()
     .from("pedido_item")
     .select("id_item,descripcion,cantidad,precio_unitario,subtotal")
     .eq("pedido_id", ped.id);
+  if (itemsError) throw new Error("No pudimos consultar el detalle del pedido.");
 
   // La UI decide que mostrar en el bloque de pago segun estado del pedido.
   const estado = ped.estado;

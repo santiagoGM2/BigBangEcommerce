@@ -10,6 +10,7 @@ node_modules
 
 # next.js
 .next
+.next-verification
 out
 build
 dist
@@ -19,12 +20,8 @@ dist
 
 # env — NUNCA subir secretos al historial
 gha-creds-*.json
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env*.local
+.env*
+!.env.example
 
 # testing
 coverage
@@ -58,10 +55,12 @@ supabase/.temp/
 /_fotos-productos-pendientes/
 /.erp-audit/
 /.drive-photo-reports/
+/output/
 
-# Credenciales temporales de Google Actions y caches Python
-gha-creds-*.json
+# Caches y entornos aislados Python
 __pycache__/
+.venv/
+*.py[cod]
 
 # capturas de auditoria QA (generadas por playwright-skill, no productivo)
 _qa-screenshots

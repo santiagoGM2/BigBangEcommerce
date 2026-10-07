@@ -1,156 +1,104 @@
-# Importacion masiva de fotografias
+# Importador local de fotografías
 
-## Uso y configuracion
+Este comando permite procesar una tanda local. La operación diaria de la
+carpeta en la nube se documenta por separado en la [guía de Drive](google-drive-product-images-automation.md).
 
-`pnpm fotos --dry-run` valida y optimiza en memoria sin subir, escribir BD, crear
-locks/diarios, renombrar ni mover originales. Codigo 1 significa pendientes o
-bloqueos; codigo 0 requiere validacion completa. `pnpm fotos` es la carga real:
-NO ejecutada todavia. La migracion tampoco se aplica automaticamente.
+## Comandos
 
-Carga `.env.local` y luego `.env`: CATALOGO_API_BASE, CATALOGO_API_KEY,
-NEXT_PUBLIC_SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY. El CLI es server-only.
-No usa anon para administrar. `_fotos-productos-pendientes/` esta ignorada por
-Git completa. Se omiten ocultos, Thumbs.db, enlaces y carpetas procesadas.
+- `pnpm fotos --dry-run`: valida nombres, catálogo, formato, optimización y
+  conciliación. No sube archivos, escribe en BD, crea bloqueos/diarios ni mueve originales.
+- `pnpm fotos`: carga real. Solo archiva cada original después de confirmar
+  Storage y su relación en base de datos.
 
-## Contenido y nombres
+Carga `.env.local` y después `.env`; requiere `CATALOGO_API_BASE`,
+`CATALOGO_API_KEY`, `NEXT_PUBLIC_SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY`.
+Las claves administrativas se usan solo en este proceso de servidor.
+Las migraciones no se aplican automáticamente.
 
-Con la ampliacion autorizada, acepta JPEG, PNG, WEBP y HEIC, con o sin extension.
-La cabecera identifica el formato; solo la decodificacion completa confirma su
-validez. Una cabecera con datos truncados falla. No se aceptan extensiones
-arbitrarias, aunque el contenido sea una imagen.
+La carpeta `_fotos-productos-pendientes/` está ignorada completamente por Git.
+Se omiten ocultos, `Thumbs.db`, enlaces y carpetas procesadas. Los diarios locales
+se conservan dentro de esa carpeta junto con los originales.
 
-HEIC usa libheif-js 1.23.2 WASM en un worker local sin variables de entorno del
-proceso. No se desactivan limites internos del codec. Se limita a 32 MB de
-entrada, 40 MP, 30 segundos y dos decodificadores simultaneos. Heap JS: 128 MB
-(este limite no incluye memoria WASM). Cada worker se termina tras una imagen.
-Se rechazan contenedores con multiples imagenes de nivel superior.
-libheif aplica la orientacion del contenedor; sharp convierte los pixeles a WEBP.
+## Contenido, formato y orden
 
-Sharp limita a 1200 px en el lado mayor, conserva proporcion, no amplia imagenes
-pequenas y usa calidad WEBP 80. JPEG/PNG/WEBP reciben orientacion EXIF. Se procesan
-como maximo cinco archivos a la vez, con hasta dos HEIC dentro de ese limite.
+Acepta JPEG, PNG, WEBP y HEIC con o sin extensión. La cabecera detecta el formato
+real y la decodificación completa confirma que sea válido. Extensiones
+arbitrarias, imágenes animadas o contenedores con varias imágenes se rechazan.
+Sharp convierte a WEBP calidad 80, máximo 1200 px en el lado mayor, sin ampliar
+archivos pequeños y conservando proporción y orientación.
 
-| Original | id_item | orden | Storage |
+HEIC se decodifica con libheif-js en un worker aislado sin variables de entorno.
+Se limita a 32 MiB, 40 MP, 30 segundos y dos decodificadores simultáneos; el
+máximo global es cinco archivos. El límite JS no equivale a limitar toda la
+memoria WASM. No se desactivan límites internos del codec.
+
+| Original | ID | Orden | Nombre final |
 | --- | --- | --- | --- |
-| 000480.jpg / 000480 | 000480 | 1 | 000480.webp |
-| 000480 (1).heic / 000480(1) / 000480-1 | 000480 | 2 | 000480-1.webp |
-| 000480 (2).png / 000480(2) | 000480 | 3 | 000480-2.webp |
+| `000480.jpg` o `000480` | `000480` | 1 | `000480.webp` |
+| `000480 (1).heic` o `000480-1` | `000480` | 2 | `000480-1.webp` |
+| `000480 (2).png` | `000480` | 3 | `000480-2.webp` |
 
-Conserva los IDs reales como cadenas y los huecos de orden. Si el nombre omite
-ceros, se acepta solo un cruce unico con el catalogo real (14325 -> 014325).
-IDs exactos tienen prioridad; alias ambiguos se bloquean. Por decision del propietario,
-se conservan TODOS los archivos que originalmente apuntaban al mismo destino.
-Primero reserva posiciones previas y sufijos explicitos; para una colision,
-prioriza el original sin extension y desempata por ruta textual estable. Las
-otras imagenes reciben el siguiente orden libre desde 2, sin desplazar las
-secundarias explicitas. No renombra originales ni depende del orden de lectura.
+Los IDs son cadenas. Si faltan ceros iniciales, solo se acepta una coincidencia
+única con el catálogo real. El ID exacto tiene prioridad y una ambigüedad bloquea
+ese archivo. Las colisiones se conservan: se reservan posiciones explícitas y
+previas, se prioriza el original sin extensión y se asigna el siguiente hueco
+libre desde orden 2 al adicional. El desempate por ruta es estable.
 
-Antes de cualquier subida real, persiste atomicamente TODAS las asignaciones
-en .fotos-import-state/assignments.json (proyecto, archivo, ID, orden y objeto).
-Los reintentos parciales y correcciones del mismo archivo mantienen esa posicion,
-aunque las otras fotos ya esten en procesadas. El dry-run solo calcula y muestra
-el plan, sin crear ese registro. Si la tabla existe, consulta sus posiciones
-ocupadas para no pisar imagenes sin una asignacion local conocida. Si se pierde
-el registro, la recuperacion de correspondencias requiere revision; no se
-interpreta un archivo desconocido como correccion de una foto remota existente.
-Mientras falta la tabla, los ordenes del dry-run son una propuesta local: deben
-validarse otra vez con la migracion aplicada antes de cargar.
+Las asignaciones se guardan atómicamente antes de una carga real en
+`.fotos-import-state/assignments.json`. Un reintento parcial conserva posiciones
+incluso si otros originales ya se movieron a `procesadas/`. Si se pierde el
+registro, no tratar una foto desconocida como reemplazo de una relación existente.
 
-## Catalogo y suspension
+## Validación del producto y relación
 
-Los IDs vienen de `/producto-ids`, consulta autenticada a la misma vista real
-del ERP desde el Droplet. Es independiente de precios y de los filtros de
-publicacion de la tienda. producto_extra no es el ERP.
-Un catalogo inaccesible, vacio o malformado bloquea todas las subidas: los IDs
-quedan sin validar, nunca se declaran inexistentes por un fallo de conexion.
+El endpoint autenticado `/producto-ids` consulta la misma vista del ERP antes
+del lote. Es independiente de precios y filtros públicos. Si responde vacío,
+incompleto o falla, se bloquean las subidas; no se declaran IDs inexistentes.
 
-El historial de DigitalOcean confirma que el Droplet anterior fue destruido;
-no hay backups ni snapshots en el panel. El nuevo Droplet ya sirve IDs mediante
-HTTPS valido, DNS 137.184.240.13 y certificado con renovacion automatica.
-La vista MariaDB es de solo lectura y no se modifica; la conexion ERP sin TLS
-fue autorizada expresamente por el propietario. HTTPS sigue verificado en todos
-los servicios. No se publican precios hasta confirmar las reglas comerciales.
+`producto_imagenes` tiene `id_item text`, URL pública, orden positivo y
+`UNIQUE(id_item, orden)`. La FK apunta al complemento real `producto_extra`,
+no a una tabla inventada del ERP. La RPC `register_product_image` conserva
+UUID/fecha de creación, actualiza el registro y sincroniza `producto_extra.foto_url`
+cuando `orden=1`, dentro de una transacción. La FK usa NO ACTION: no inventa
+borrados en MariaDB ni elimina objetos Storage.
 
-## Migracion revisada y aplicada con autorizacion posterior
+RLS permite leer solo imágenes de productos visibles; la escritura y la RPC
+administrativa requieren service role. La galería web consume las imágenes
+dentro de la misma caché de catálogo de seis horas.
 
-supabase/migrations/20261001214710_product_images.sql esta basada en consultas
-reales de solo lectura al proyecto rzhzuvmrnfuctwyunhiu. producto_extra tiene PK
-id_item text, foto_url text, visible boolean default true, nota y timestamps
-timestamptz. No hay una tabla local de productos del ERP.
+## Idempotencia y fallos
 
-La nueva producto_imagenes tiene UUID, id_item text compatible, foto_url text,
-orden integer CHECK (orden > 0), created_at/updated_at con now(). La FK apunta al
-complemento real producto_extra(id_item). UNIQUE (id_item, orden) crea el indice
-B-tree que cubre upsert, busquedas por producto/orden y comprobacion de FK: no se
-agrega otro indice redundante por id_item.
+El importador local usa una clave Storage estable por `(id_item, orden)` y
+`upsert`; repetir o corregir no crea otra fila. Guarda URLs públicas permanentes,
+no enlaces firmados con vencimiento. Una corrección puede tardar en verse por
+la caché de Storage y del catálogo.
 
-La FK usa NO ACTION: impide borrar un complemento con fotos. No se inventa una
-cascada al ERP ni un borrado automatico de objetos Storage.
-
-RLS permite a anon/authenticated solo leer fotos de productos visibles. La RPC
-register_product_image es SECURITY INVOKER, con EXECUTE solo para service_role.
-Crea el complemento si falta, hace upsert y sincroniza producto_extra.foto_url
-para orden 1 en una transaccion. Conserva visible/nota, UUID y created_at;
-actualiza updated_at desde la RPC (no hay trigger universal para SQL externo).
-
-La tienda mantiene su campo principal; las secundarias quedan en la nueva tabla.
-No se agrega una galeria visual. El cache del catalogo tiene TTL de seis horas.
-
-## Idempotencia y fallos parciales
-
-La clave Storage depende exclusivamente de (id_item, orden); upload usa upsert.
-La URL publica permanente de getPublicUrl() se guarda en producto_imagenes y,
-para orden 1, tambien en producto_extra. No son URLs firmadas con vencimiento.
-Una correccion reemplaza bytes en la misma URL; el cache de una hora puede
-retrasar su visualizacion.
-
-Repetir una tanda no crea claves ni filas nuevas. Si los originales ya fueron
-archivados, la siguiente ejecucion no los encuentra; si se presentan de nuevo,
-se actualizan las mismas claves. La combinacion UNIQUE evita duplicados en BD.
-
-Storage y PostgreSQL no comparten transaccion: un reemplazo puede ser visible
-antes de confirmar BD. No se promete rollback entre servicios ni se borran
-objetos automaticamente al fallar la BD.
+Storage y PostgreSQL no comparten transacción. Antes de subir se persiste con
+fsync un diario por objeto con hash y estados `uploadAttempt`,
+`storageConfirmed`, `databaseConfirmed`, `archived`. No se promete rollback
+entre ambos servicios ni se borran objetos automáticamente ante fallos.
 
 | Escenario | Comportamiento |
 | --- | --- |
-| A: Storage falla | No se llama BD ni se archiva; el intento queda pendiente incluso si la respuesta se perdio despues de escribir. |
-| B: Storage OK, BD falla | Original pendiente y diario para detectar un objeto huerfano o reemplazo pendiente. |
-| C: Storage/BD OK, mover falla | moveError, no success; diario databaseConfirmed; reintento sobre mismas claves. |
-| D: principal OK, secundaria falla | Principal confirmada intacta; solo secundaria queda pendiente. |
+| Optimiza y Storage falla | Sin relación ni archivo archivado; intento detectable |
+| Storage OK y BD falla | Original pendiente y diario para conciliación; el objeto puede existir |
+| Storage y BD OK, movimiento falla | Estado `moveError`; reintento sobre mismas claves |
+| Portada OK y secundaria falla | Portada confirmada permanece; secundaria pendiente |
+| Confirmación final perdida | Conciliación compara diario, Storage y BD antes de continuar |
 
-Antes de Storage se persiste con fsync un diario append-only por objeto en
-.fotos-import-state/ dentro de la carpeta ignorada. Registra clave, ID, orden,
-original, SHA-256 del WEBP e hitos uploadAttempt/storageConfirmed/
-databaseConfirmed/archived. Si no puede persistir, no comienza la siguiente
-etapa. No guarda secretos.
+Un dry-run posterior revisa los intentos pendientes sin modificarlos. Para
+reintentar requiere el mismo original y hash; un archivo cambiado/ausente o un
+diario truncado exige revisión. Conservar originales y diarios como conjunto.
 
-El siguiente dry-run consulta los intentos pendientes, Storage y BD. Detecta
-contenido distinto o falta de relacion; no borra ni resuelve automaticamente.
-Para reintentar exige el mismo original/hash. Si falta o cambio, bloquea para
-revision. Un diario truncado tambien bloquea. Conservar el diario junto a los
-originales: si se pierde, no se garantiza detectar todos los intentos anteriores.
+Un bloqueo local evita procesos simultáneos sobre la carpeta y un bloqueo
+remoto coordina el importador con Drive. No eliminar un bloqueo sin verificar
+que la operación previa terminó. Solo se mueve a `procesadas/` después de la
+confirmación; si el nombre de destino existe se conserva y se utiliza un UUID
+para el nuevo original.
 
-Un lock local, tomado antes de leer las asignaciones, impide cargas simultaneas
-sobre la misma carpeta. Si queda tras
-un cierre abrupto, verificar que no haya un proceso activo antes de retirarlo.
-No coordina computadoras diferentes: operar un solo importador sobre el bucket.
+## Evidencia
 
-Solo se archiva tras confirmar Storage y respuesta RPC. Si existe el destino
-original, se conserva y se agrega UUID al nuevo archivo. Si falla el diario
-final despues de mover, se informa explicitamente; BD ya estaba confirmada.
-
-## Verificacion
-
-pnpm test:fotos ejercita SDK real con HTTP simulado (sin red): repeticiones,
-correccion, escenarios A-D, respuesta perdida, diario y recuperacion. La
-migracion se verifica por separado en PGlite temporal: UUID/created_at,
-UNIQUE/FK/orden, timestamps, rollback atomico de RPC, RLS y privilegios.
-
-pnpm lint:fotos usa reglas TypeScript de Next sin plugins de UI. El fallo global
-FlatCompat/React se reproduce sobre lib/catalogo/proxy.ts sin modificaciones;
-el hash de eslint.config.mjs coincide con HEAD y las versiones de ESLint/Next
-ya estaban en el lockfile de HEAD. No se modifico esa configuracion global.
-
-Fuentes: [DigitalOcean](https://docs.digitalocean.com/support/ive-paid-my-bill-so-why-arent-my-services-online/),
-[libheif-js](https://github.com/catdad-experiments/libheif-js).
+`pnpm test:fotos` valida repeticiones, correcciones, fallos parciales, límites,
+conciliación, colisiones y alcance de Drive mediante datos sintéticos y HTTP
+simulado. Las pruebas de esquema se ejecutan en una base aislada. Los reportes
+fechados están en [archive/](archive/README.md), no representan un inventario actual.

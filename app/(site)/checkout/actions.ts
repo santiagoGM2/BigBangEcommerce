@@ -1,11 +1,12 @@
 "use server";
 
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { resolverCarrito } from "@/lib/carrito/resolver";
 import type { CartItem } from "@/lib/carrito/types";
 import { extraerIP, ratelimit } from "@/lib/seguridad/rate-limit";
 import { getSupabaseAdmin } from "@/lib/supabase/server";
+import { createOrderAccessToken, getOrderAccessSecret, orderAccessCookieName, ORDER_ACCESS_TTL_SECONDS } from "@/lib/seguridad/order-access";
 
 // TODO(cliente): definir tabla real de costos de envio (por ciudad? por
 // peso? gratis desde X monto?). Hasta que el cliente confirme la tarifa,
@@ -105,6 +106,8 @@ export async function accionCrearPedido(
   const total = subtotal + costoEnvio;
 
   const admin = getSupabaseAdmin();
+  // Validar antes de escribir: nunca crear un pedido que no podamos autorizar.
+  const accessSecret = getOrderAccessSecret();
 
   // Numero de pedido con la funcion atomica del backend.
   const { data: numeroData, error: numeroError } = await admin.rpc(
@@ -163,15 +166,29 @@ export async function accionCrearPedido(
   const { error: lineasError } = await admin.from("pedido_item").insert(lineasInsert);
   if (lineasError) {
     console.error("[pedido] insert lineas fallo:", lineasError);
-    // El pedido cabecera quedo huerfano. Como somos idempotentes y la
-    // pagina de confirmacion re-consulta por numero, un intento posterior
-    // con el MISMO numero fallaria por unique. Es mejor limpiar aca.
-    await admin.from("pedido").delete().eq("id", pedido.id);
+    // Limpiar la cabecera incompleta; un reintento genera otro número.
+    const { error: cleanupError } = await admin.from("pedido").delete().eq("id", pedido.id);
+    if (cleanupError) console.error("[pedido] no se pudo limpiar cabecera incompleta:", { id: pedido.id, code: cleanupError.code });
     return {
       ok: false,
       error: "No pudimos guardar las líneas del pedido. Intenta de nuevo.",
     };
   }
+
+  // El número público no autoriza acceso a datos personales. La cookie
+  // HttpOnly queda en el navegador comprador y vuelve tras el pago (Lax).
+  const cookieStore = await cookies();
+  const accessCookies = cookieStore.getAll().filter(cookie => cookie.name.startsWith("bb-order-"));
+  for (const oldCookie of accessCookies.slice(0, Math.max(0, accessCookies.length - 19))) {
+    cookieStore.set(oldCookie.name, "", { path: "/checkout", maxAge: 0 });
+  }
+  cookieStore.set(orderAccessCookieName(numero), createOrderAccessToken(numero, accessSecret), {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/checkout",
+    maxAge: ORDER_ACCESS_TTL_SECONDS,
+  });
 
   // Redirect fuera del try — Next lo maneja como throw controlado.
   redirect(`/checkout/confirmacion?pedido=${encodeURIComponent(numero)}`);

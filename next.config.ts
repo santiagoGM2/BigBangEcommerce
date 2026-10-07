@@ -8,9 +8,7 @@ import type { NextConfig } from "next";
 //   - Iframe de Google Maps embed en la seccion "Encuentranos"
 //   - Widget de ePayco checkout on-page (checkout.epayco.co inyecta iframe
 //     y hace requests a esos dominios cuando se abre la modal de pago)
-//   - Proxy del catalogo (api.tiendasbigbang.com) — se llama desde el
-//     server, no desde el navegador; connect-src lo permite igual por si
-//     algun dia se cambia a fetch cliente.
+//   - El proxy del catálogo se consulta únicamente desde el servidor.
 //
 // 'unsafe-inline' en script/style se mantiene porque:
 //   - Next 16 con Turbopack inyecta inline scripts para hydration (no hay
@@ -18,15 +16,15 @@ import type { NextConfig } from "next";
 //   - JSON-LD del producto es inline.
 //   - Los estilos custom con CSS variables inline requeriren 'unsafe-inline'
 //     en style-src.
-// Mitigacion: la superficie XSS real esta acotada porque no aceptamos
-// contenido de usuario que se pinte directo (todo pasa por React auto-escape).
+// El JSON-LD escapa '<'; los demás datos se renderizan con React.
+// eval solo se permite en desarrollo, donde lo necesita el depurador.
 const CSP = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.epayco.co https://checkout.epayco.co/*",
+  `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""} https://checkout.epayco.co`,
   "style-src 'self' 'unsafe-inline'",
   "font-src 'self' data:",
   "img-src 'self' data: blob: https:",
-  "connect-src 'self' https://api.tiendasbigbang.com https://*.supabase.co https://*.epayco.co",
+  "connect-src 'self' https://*.supabase.co https://*.epayco.co",
   "frame-src 'self' https://maps.google.com https://www.google.com https://checkout.epayco.co https://*.epayco.co",
   "form-action 'self' https://checkout.epayco.co https://*.epayco.co",
   "base-uri 'self'",
@@ -70,10 +68,16 @@ const SECURITY_HEADERS = [
 ] as const;
 
 const config: NextConfig = {
+  // El build de verificación usa datos sintéticos y nunca sustituye .next.
+  distDir: process.env.BIGBANG_VERIFY_BUILD_DIR === "1" ? ".next-verification" : ".next",
   reactStrictMode: true,
   // Quita el header "X-Powered-By: Next.js" — no aporta al usuario, si
   // aporta a un atacante para elegir exploits especificos del framework.
   poweredByHeader: false,
+  async rewrites() {
+    // Conserva la URL anunciada por robots sin colisionar con sitemap.ts.
+    return { beforeFiles: [{ source: "/producto/sitemap.xml", destination: "/producto/sitemap-index.xml" }] };
+  },
   images: {
     remotePatterns: [
       {

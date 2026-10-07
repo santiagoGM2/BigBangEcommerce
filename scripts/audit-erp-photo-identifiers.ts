@@ -26,16 +26,16 @@ async function main() {
     matchedProductIds: new Set(matched.map(row => row.matches[0])).size,
     filesWithoutMatch: missing.length, idsWithoutMatch: new Set(missing.map(row => row.namedId)).size,
     ambiguous: audit.filter(row => row.matches.length > 1).length };
-  const report = "# Auditoria de IDs contra la vista — 2026-10-01\n\n" +
-    "Lectura real completa desde el Droplet. Sin escrituras ni subidas. La coincidencia\n" +
-    "por ceros usa strings y exige un unico ID real; no cambia aun el importador.\n\n" +
+  const report = `# Auditoria de IDs sobre captura local — ${new Date().toISOString()}\n\n` +
+    "Cruce con catalog-raw.json guardado localmente; no sustituye una consulta actual al ERP.\n" +
+    "Sin escrituras remotas ni subidas. La coincidencia por ceros usa strings y exige un unico ID.\n\n" +
     "```json\n" + JSON.stringify(summary, null, 2) + "\n```\n\n" +
     "## Archivos sin coincidencia en la vista actual\n\n" + missing.map(row => `- ${row.file}`).join("\n") +
     "\n\nNo demuestra que el producto no exista en otras tablas del ERP. Requiere revisar\n" +
     "el identificador y si el producto se incluye en esta vista.\n\n" +
     "## Cruces encontrados\n\n| Archivo | ID real |\n| --- | --- |\n" +
     matched.map(row => `| ${row.file} | ${row.matches[0]} |`).join("\n") + "\n";
-  await writeFile("docs/erp-photo-identifiers-20261001.md", report);
+  await writeFile(".erp-audit/erp-photo-identifiers.md", report);
   console.log(JSON.stringify(summary, null, 2));
 }
 main().catch(() => { console.error("La auditoria de IDs fallo; no se usa un listado parcial."); process.exitCode = 1; });

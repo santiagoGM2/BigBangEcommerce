@@ -4,7 +4,7 @@
   "private": true,
   "packageManager": "pnpm@11.18.0",
   "engines": {
-    "node": ">=20.9.0"
+    "node": ">=22.19.0"
   },
   "scripts": {
     "fotos": "tsx --conditions react-server scripts/import-product-images.ts",
@@ -14,10 +14,14 @@
     "lint:fotos": "eslint --config eslint.fotos.config.mjs scripts/import-product-images.ts scripts/scan-drive-product-images.ts scripts/sync-drive-product-images.ts scripts/audit-drive-subfolder-images.ts scripts/inspect-photo-id.ts scripts/product-images eslint.fotos.config.mjs",
     "dev": "next dev",
     "build": "next build",
+    "build:verify": "tsx scripts/verify-build.ts",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test": "tsx --conditions react-server --test lib/**/*.test.ts",
+    "test:schema": "tsx scripts/verify-database-schema.ts",
+    "test:quality": "tsx --test scripts/quality/*.test.ts",
+    "audit:dependencies": "tsx scripts/audit-dependencies.ts",
     "gen:familias": "tsx scripts/generate-familias.ts",
     "gen:placeholders": "tsx scripts/generate-placeholders.ts",
     "gen:types": "tsx scripts/generate-supabase-types.ts",
@@ -25,32 +29,33 @@
     "probe:erp": "tsx scripts/probe-erp-view.ts"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.111.0",
+    "@supabase/supabase-js": "2.111.0",
     "clsx": "^2.1.1",
-    "next": "^16.2.12",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "tailwind-merge": "^3.4.0",
-    "undici": "^8.9.0",
-    "zod": "^4.4.3"
+    "next": "16.4.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "tailwind-merge": "^3.7.0",
+    "undici": "^8.11.2",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
     "@eslint/compat": "^2.1.1",
-    "@eslint/eslintrc": "^3.3.6",
+    "@eslint/eslintrc": "^3.3.7",
     "@tailwindcss/postcss": "^4.3.3",
-    "@types/node": "^22.10.0",
-    "@types/react": "^19.2.0",
-    "@types/react-dom": "^19.2.0",
+    "@types/node": "^22.20.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "dotenv": "^17.4.2",
-    "eslint": "^10.8.0",
-    "eslint-config-next": "^16.2.12",
+    "eslint": "^10.12.0",
+    "eslint-config-next": "16.4.0",
     "google-auth-library": "11.1.0",
     "libheif-js": "1.23.2",
     "mariadb": "^3.5.4",
     "server-only": "^0.0.1",
-    "sharp": "0.35.3",
+    "sharp": "0.35.5",
     "tailwindcss": "^4.3.3",
-    "tsx": "^4.19.6",
+    "tsx": "^4.23.15",
     "typescript": "^5.9.3"
   }
 }

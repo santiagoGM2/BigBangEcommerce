@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { serializeJsonLd } from "@/lib/seo/serialize-json-ld";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { getProductoPorId } from "@/lib/catalogo";
@@ -158,7 +159,7 @@ export default async function ProductoPage({ params }: PageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
+          __html: serializeJsonLd({
             "@context": "https://schema.org",
             "@type": "Product",
             name: producto.descripcion_mostrable,

@@ -97,7 +97,9 @@ export function mapEpaycoStateToOrderState(x_cod_response: string | number):
   | "fallido"
   | "pendiente"
   | null {
-  const code = typeof x_cod_response === "string" ? parseInt(x_cod_response, 10) : x_cod_response;
+  const code = typeof x_cod_response === "string" && /^\d+$/.test(x_cod_response)
+    ? Number(x_cod_response)
+    : x_cod_response;
   switch (code) {
     case 1:
       return "pagado";

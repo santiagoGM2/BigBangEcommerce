@@ -4,21 +4,18 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
-  useRef,
-  useState,
+  useSyncExternalStore,
 } from "react";
 import type { CartItem } from "./types";
-
-const STORAGE_KEY = "bb_cart_v1";
+import { CART_STORAGE_KEY, MAX_CART_QTY, createCartStorage } from "./storage";
 
 /**
  * Limite defensivo para la cantidad por linea. Cualquier valor manual mas
  * alto se recorta. No es una politica de negocio, solo protege contra
  * un usuario que edite el input a 999999.
  */
-const MAX_QTY = 99;
+const MAX_QTY = MAX_CART_QTY;
 
 interface CartContextValue {
   items: CartItem[];
@@ -34,74 +31,30 @@ interface CartContextValue {
 
 const CartContext = createContext<CartContextValue | null>(null);
 
-function readStorage(): CartItem[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw) as unknown;
-    if (!Array.isArray(parsed)) return [];
-    return parsed
-      .filter(
-        (x): x is CartItem =>
-          typeof x === "object" &&
-          x !== null &&
-          "id_item" in x &&
-          typeof (x as CartItem).id_item === "string" &&
-          typeof (x as CartItem).cantidad === "number" &&
-          (x as CartItem).cantidad > 0,
-      )
-      .map((x) => ({
-        id_item: x.id_item,
-        cantidad: Math.min(MAX_QTY, Math.max(1, Math.floor(x.cantidad))),
-      }));
-  } catch {
-    return [];
-  }
-}
-
-function writeStorage(items: CartItem[]) {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  } catch {
-    // Espacio agotado o modo privado -> no hay nada util que hacer.
-  }
-}
-
-export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
-  const [isHydrated, setIsHydrated] = useState(false);
-  // Evita escribir en localStorage antes de haber leido: si el usuario abre
-  // una segunda pestana justo cuando la primera arranca, no queremos que la
-  // segunda pise con [] lo que la primera acababa de escribir.
-  const canPersist = useRef(false);
-
-  // Hidratacion inicial.
-  useEffect(() => {
-    setItems(readStorage());
-    setIsHydrated(true);
-    canPersist.current = true;
-  }, []);
-
-  // Persistencia en cada cambio (post hidratacion).
-  useEffect(() => {
-    if (!canPersist.current) return;
-    writeStorage(items);
-  }, [items]);
-
-  // Sincronizacion entre pestanas.
-  useEffect(() => {
-    function onStorage(e: StorageEvent) {
-      if (e.key !== STORAGE_KEY) return;
-      setItems(readStorage());
+const cartStorage = createCartStorage({
+  read: () => window.localStorage.getItem(CART_STORAGE_KEY),
+  write: (value) => window.localStorage.setItem(CART_STORAGE_KEY, value),
+  subscribe(listener) {
+    function onStorage(event: StorageEvent) {
+      if (
+        (event.key === CART_STORAGE_KEY || event.key === null) &&
+        event.storageArea === window.localStorage
+      ) listener();
     }
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
-  }, []);
+  },
+});
+
+export function CartProvider({ children }: { children: React.ReactNode }) {
+  const { items, isHydrated } = useSyncExternalStore(
+    cartStorage.subscribe,
+    cartStorage.getSnapshot,
+    cartStorage.getServerSnapshot,
+  );
 
   const add = useCallback((id_item: string, cantidad: number = 1) => {
-    setItems((prev) => {
+    cartStorage.update((prev) => {
       const existente = prev.find((x) => x.id_item === id_item);
       if (existente) {
         return prev.map((x) =>
@@ -115,7 +68,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const setQty = useCallback((id_item: string, cantidad: number) => {
-    setItems((prev) => {
+    cartStorage.update((prev) => {
       if (cantidad <= 0) return prev.filter((x) => x.id_item !== id_item);
       const clamped = Math.min(MAX_QTY, Math.floor(cantidad));
       return prev.map((x) => (x.id_item === id_item ? { ...x, cantidad: clamped } : x));
@@ -123,11 +76,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const remove = useCallback((id_item: string) => {
-    setItems((prev) => prev.filter((x) => x.id_item !== id_item));
+    cartStorage.update((prev) => prev.filter((x) => x.id_item !== id_item));
   }, []);
 
   const clear = useCallback(() => {
-    setItems([]);
+    cartStorage.update(() => []);
   }, []);
 
   const count = useMemo(
