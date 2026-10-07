@@ -6,30 +6,19 @@ import {
 } from "./epayco";
 
 describe("computeEpaycoSignature", () => {
-  // ---------------------------------------------------------------------------
-  // Vector fijo. Los seis inputs y el hash esperado se escriben como literales,
-  // calculados FUERA de la funcion bajo prueba (con el comando node one-liner
-  // documentado abajo). El proposito de este test es que si alguien cambia
-  // el algoritmo (sha256 -> md5, sha256 -> sha512), el orden o el separador,
-  // el hash literal deja de coincidir y el test falla.
-  //
-  // Reproducir el hash desde una terminal (fuera de esta funcion):
-  //
-  //   node -e "console.log(require('crypto').createHash('sha256')
-  //     .update('509884^af2405f5c17f0c94b0d5a2b06ffcedaef6a13c9c^162232^25000018^1000.00^COP','utf8')
-  //     .digest('hex'))"
-  //   -> bed16c2effa0d8940262668cb86789f3c72b1ef767778dd006a1371980fc6825
-  // ---------------------------------------------------------------------------
+  // Vector sintetico: ninguna credencial corresponde a una cuenta real.
+  // Hashes precalculados fuera de computeEpaycoSignature para detectar
+  // cambios involuntarios de algoritmo, orden y separador.
   const VECTOR = {
-    custId: "509884",
-    privateKey: "af2405f5c17f0c94b0d5a2b06ffcedaef6a13c9c",
-    refPayco: "162232",
-    transactionId: "25000018",
+    custId: "test-customer",
+    privateKey: "synthetic-epayco-key-for-tests-only",
+    refPayco: "test-reference",
+    transactionId: "test-transaction",
     amount: "1000.00",
     currencyCode: "COP",
   } as const;
   const EXPECTED_SHA256 =
-    "bed16c2effa0d8940262668cb86789f3c72b1ef767778dd006a1371980fc6825";
+    "fca182a4eabf387fcaf12788f62b1a0acc6b70c5d4def7a3562bcf9781e268f8";
 
   it("hashea el vector fijo con SHA256 al valor esperado (literal)", () => {
     const got = computeEpaycoSignature(VECTOR);
@@ -42,14 +31,7 @@ describe("computeEpaycoSignature", () => {
   });
 
   it("no coincide con el equivalente MD5 (proteccion contra regresion al bug historico)", () => {
-    // MD5 del mismo raw. Si esto llegara a coincidir con la salida de la
-    // funcion, es que alguien volvio a MD5. Literal, calculado externamente:
-    //
-    //   node -e "console.log(require('crypto').createHash('md5')
-    //     .update('509884^af2405f5c17f0c94b0d5a2b06ffcedaef6a13c9c^162232^25000018^1000.00^COP','utf8')
-    //     .digest('hex'))"
-    //   -> 49998164026d23bb9da819db3d524085
-    const MD5_HASH = "49998164026d23bb9da819db3d524085";
+    const MD5_HASH = "4d0785a6500d27906861f5d152f607d7";
     const got = computeEpaycoSignature(VECTOR);
     assert.notEqual(got, MD5_HASH, "La funcion regresiono a MD5.");
   });
@@ -96,4 +78,10 @@ describe("mapEpaycoStateToOrderState", () => {
       assert.equal(mapEpaycoStateToOrderState(String(code)), expected);
     });
   }
+
+  it("ignora codigos malformados aunque comiencen por un numero valido", () => {
+    for (const code of ["1junk", "1.5", "1e0", "", " 1"]) {
+      assert.equal(mapEpaycoStateToOrderState(code), null);
+    }
+  });
 });

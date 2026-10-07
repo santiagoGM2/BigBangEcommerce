@@ -7,11 +7,12 @@ import { accionResolverCarrito } from "@/app/(site)/carrito/actions";
 import { useCart } from "@/lib/carrito/CartContext";
 import { formatearPrecio } from "@/lib/catalogo/formato";
 import { placeholderFamilia } from "@/lib/catalogo/placeholders";
-import type { CarritoResuelto } from "@/lib/carrito/types";
+import type { CarritoResuelto, CartItem } from "@/lib/carrito/types";
 import type { FamiliaSlug } from "@/lib/catalogo/familias-meta";
 import type { Snapshot } from "@/lib/carrito/resolver";
 
 const SNAPSHOT_KEY = "bb_cart_snapshot_v1";
+const EMPTY_CART: CarritoResuelto = { lineas: [], subtotal: 0, avisos: [] };
 
 function leerSnapshot(): Snapshot[] {
   if (typeof window === "undefined") return [];
@@ -41,9 +42,11 @@ function guardarSnapshot(lineas: CarritoResuelto["lineas"]) {
 
 export function CarritoCliente() {
   const { items, isHydrated, setQty, remove, clear } = useCart();
-  const [resuelto, setResuelto] = useState<CarritoResuelto | null>(null);
-  const [cargando, setCargando] = useState(false);
+  const [resolvedCart, setResolvedCart] = useState<CarritoResuelto | null>(null);
+  const [settledItems, setSettledItems] = useState<CartItem[] | null>(null);
   const [avisosDismissed, setAvisosDismissed] = useState(false);
+  const resuelto = items.length === 0 ? EMPTY_CART : resolvedCart;
+  const cargando = isHydrated && items.length > 0 && settledItems !== items;
   // Cada request al server tiene un "id de intento" ascendente. Cuando llega
   // una respuesta, solo la aplicamos si sigue siendo la mas reciente: asi
   // evitamos pisar el estado con una respuesta vieja si el usuario toca +/-
@@ -51,18 +54,13 @@ export function CarritoCliente() {
   const attemptRef = useRef(0);
 
   useEffect(() => {
-    if (!isHydrated) return;
-    if (items.length === 0) {
-      setResuelto({ lineas: [], subtotal: 0, avisos: [] });
-      return;
-    }
     const myAttempt = ++attemptRef.current;
-    setCargando(true);
+    if (!isHydrated || items.length === 0) return;
     const snap = leerSnapshot();
     accionResolverCarrito(items, snap)
       .then((r) => {
         if (myAttempt !== attemptRef.current) return;
-        setResuelto(r);
+        setResolvedCart(r);
         // Auto-remocion: si el catalogo dice que un id ya no existe, lo
         // sacamos del context (y por tanto del localStorage).
         const removidos = r.avisos.filter((a) => a.tipo === "removido");
@@ -76,8 +74,12 @@ export function CarritoCliente() {
         console.error("[carrito] resolver fallo:", err);
       })
       .finally(() => {
-        if (myAttempt === attemptRef.current) setCargando(false);
+        if (myAttempt === attemptRef.current) setSettledItems(items);
       });
+    return () => {
+      // Una respuesta pendiente no debe revivir un carrito vaciado o desmontado.
+      attemptRef.current += 1;
+    };
   }, [items, isHydrated, remove]);
 
   const avisosVisibles = useMemo(

@@ -1,3 +1,5 @@
+> Registro histórico. Para operar, consulte las [guías vigentes](../README.md).
+
 # Auditoria de fotos
 
 ## Actualizacion de avisos — 2026-10-05
@@ -6,7 +8,7 @@ El JPEG corrupto y los IDs sin coincidencia ahora son incidencias explicitas
 del archivo en publicacion; el lote puede completar con advertencias.
 Los errores operativos y el dry-run estricto conservan salida de fallo.
 El resumen y el artefacto descargable incluyen todos los pendientes.
-Ver [estado vigente y criterio de errores](google-drive-product-images-automation.md).
+Ver [estado vigente y criterio de errores](../google-drive-product-images-automation.md).
 Los resultados de abajo describen las ejecuciones historicas anteriores.
 
 ## Carga real completada y reintento comprobado — 2026-10-01

@@ -1,4 +1,5 @@
 import { SITE } from "./site";
+import { serializeJsonLd } from "./serialize-json-ld";
 
 /**
  * JSON-LD renderizado inline con <script type="application/ld+json"> para que
@@ -26,7 +27,7 @@ export function LocalBusinessJsonLd() {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: serializeJsonLd(data) }}
     />
   );
 }

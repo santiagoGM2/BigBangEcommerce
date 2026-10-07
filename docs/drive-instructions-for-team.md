@@ -3,8 +3,9 @@
 ## Donde subirlas
 
 Usar la carpeta [INVENTARIO](https://drive.google.com/drive/u/1/folders/15Nz_GHOOKbfw04s1abKMjSRzQ8RSlBjt).
-Tambien se revisan sus subcarpetas. La categoria del producto se obtiene del
-ERP: el nombre de una subcarpeta no cambia su categoria en la web.
+Se revisan exclusivamente las fotos que estan directamente en INVENTARIO.
+Las subcarpetas se ignoran; no mover alli fotos que deban publicarse. La
+categoria del producto se obtiene del ERP, no del nombre de una carpeta.
 
 ## Nombres
 
