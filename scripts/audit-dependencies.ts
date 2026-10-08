@@ -15,7 +15,7 @@ function main() {
   // Siempre comprobar el parche instalado, incluso si el registro retira la alerta.
   assertBracesPatch();
   for (const alert of mitigated) {
-    console.warn(`[mitigado localmente, aun reportado por npm] ${alert.github_advisory_id}: ${alert.module_name}. Ver docs/DEPENDENCY_SECURITY.md.`);
+    console.warn(`[mitigado localmente, aun reportado por npm] ${alert.github_advisory_id}: ${alert.module_name}. Parche local verificado en patches/braces@3.0.3.patch.`);
   }
   for (const alert of unresolved) {
     console.error(`[sin resolver] ${alert.github_advisory_id}: ${alert.module_name} (${alert.severity})`);

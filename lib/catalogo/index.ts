@@ -35,7 +35,7 @@ export const OCULTAR_CATEGORIAS_POR_CONFIRMAR = false;
 //
 // No usamos unstable_cache de Next porque el payload completo pesa ~4.85MB y
 // unstable_cache tiene limite de 2MB (falla silenciosamente en caches, y muy
-// ruidosamente en el build). Ver CLAUDE.md.
+// ruidosamente en el build).
 //
 // Este cache es POR INSTANCIA de servidor. Si Vercel levanta varias en
 // paralelo, cada una hace su propio fetch. Si el droplet del ERP sufre bajo

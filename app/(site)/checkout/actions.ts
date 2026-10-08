@@ -45,7 +45,7 @@ export interface ErrorCrearPedido {
  * confirmacion. NO cobra: el paso de pago vive en /checkout/confirmacion
  * (bloqueado por las llaves de ePayco).
  *
- * INVARIANTES CRITICAS (CLAUDE.md):
+ * INVARIANTES CRITICAS:
  *   - Los totales se recalculan aqui desde el catalogo real, NUNCA se
  *     confia en lo que llega del navegador.
  *   - El numero de pedido se genera con la funcion SQL

@@ -8,7 +8,7 @@ import type { Database } from "./database.types";
  * escribir en tablas con RLS estricta que NO tienen policy publica (hoy:
  * pedido, pedido_item) y para llamar la funcion generate_numero_pedido().
  *
- * INVARIANTE (CLAUDE.md):
+ * INVARIANTE:
  *   - Esta key JAMAS debe llegar al navegador.
  *   - Este archivo importa "server-only", asi que si alguien intenta
  *     usarlo desde un client component el build falla explicitamente.
