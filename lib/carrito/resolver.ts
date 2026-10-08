@@ -18,7 +18,7 @@ export interface Snapshot {
 /**
  * Resuelve una lista de items del carrito contra el catalogo real en vivo.
  *
- * Regla de oro (CLAUDE.md): NUNCA confiar en el precio o descripcion que
+ * Regla de oro: NUNCA confiar en el precio o descripcion que
  * viene del cliente. Todo se recalcula aca desde getProductoPorId().
  * El client puede pasar un snapshot con el precio que TENIA guardado; lo
  * usamos SOLO para emitir avisos "el precio cambio" o para detectar

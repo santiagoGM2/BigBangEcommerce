@@ -16,7 +16,7 @@ import { ProductGallery } from "@/components/catalogo/ProductGallery";
 // NO usamos generateStaticParams: son ~16.000 productos y prerenderizar
 // todo agranda el build de forma innecesaria. Cada URL se sirve bajo demanda
 // la primera vez (cold miss) y queda cacheada por Next hasta la proxima
-// revalidacion. Ver CLAUDE.md > Trampas conocidas de Next 16.
+// revalidacion.
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -109,7 +109,7 @@ export default async function ProductoPage({ params }: PageProps) {
 
           {/* NO mostramos "agotado" ni deshabilitamos el CTA por existencias:
               existencias siempre llega null desde el ERP por ahora, no
-              tenemos senal real de stock. Ver CLAUDE.md > Datos del catalogo. */}
+              tenemos senal real de stock. */}
 
           <div className="flex flex-col gap-3">
             {/* CTAs primarios: agregar al carrito + comprar ahora (atajo

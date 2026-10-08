@@ -57,6 +57,13 @@ supabase/.temp/
 /.drive-photo-reports/
 /output/
 
+# Documentacion interna conservada fuera del repositorio compartido
+/README.md
+/AGENTS.md
+/CLAUDE.md
+/docs/
+/ops/catalog-proxy/README.md
+
 # Caches y entornos aislados Python
 __pycache__/
 .venv/

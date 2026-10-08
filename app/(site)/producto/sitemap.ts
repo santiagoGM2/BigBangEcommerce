@@ -9,7 +9,6 @@ import { SITE } from "@/lib/seo/site";
 // TRAMPA: en Next 16, `id` llega como Promise<number>, no como number,
 // aunque la doc oficial aun lo tipe mal. Si no lo awaiteas, el rango
 // da NaN y sitemap.xml responde 200 vacio sin ningun error visible.
-// Ver CLAUDE.md > Trampas conocidas de Next 16.
 
 const POR_SHARD = 5000;
 
